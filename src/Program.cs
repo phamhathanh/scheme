@@ -21,9 +21,10 @@ namespace Scheme
                     result = Interpreter.Interpret(datum);
                 Console.WriteLine(result);
             }
-            catch (ArgumentException exception)
+            catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
+                Console.WriteLine(exception.StackTrace);
             }
         }
     }

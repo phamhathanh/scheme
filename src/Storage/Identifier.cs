@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Scheme.Storage
@@ -21,6 +20,9 @@ namespace Scheme.Storage
                 pool.Add(input, new Identifier(input));
             return pool[input];
         }
+
+        public override Object Evaluate(Environment environment)
+            => environment.LookUp(this);
 
         public override string ToString()
             => value;

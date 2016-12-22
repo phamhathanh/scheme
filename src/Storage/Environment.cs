@@ -14,7 +14,7 @@ namespace Scheme.Storage
             this.parent = parent;
         }
 
-        public object LookUp(Identifier identifier)
+        public Object LookUp(Identifier identifier)
         {
             if (bindings.ContainsKey(identifier))
                 return bindings[identifier];
