@@ -15,6 +15,7 @@ namespace Scheme
                     {
                         ["quote"] = Quote,
                         ["pair?"] = IsPair,
+                        ["+"] = Plus,
                         ["lambda"] = Lambda
                     };
 
@@ -69,6 +70,14 @@ namespace Scheme
             var result = Interpreter.Evaluate(args[0], env);
             bool isPair = result is ConsCell;
             return Boolean.FromBool(isPair);
+        }
+
+        private static Object Plus(Object argList, Environment env)
+        {
+            // TODO: Validate: number.
+            var args = GetArgs(argList);
+            var result = args.Sum(arg => ((Number)Interpreter.Evaluate(arg, env)).Value);
+            return new Number(result);
         }
 
         private static Object Lambda(Object argList, Environment env)

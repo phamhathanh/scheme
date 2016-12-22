@@ -4,14 +4,14 @@ namespace Scheme.Storage
 {
     internal sealed class Number : Atom
     {
-        private readonly double value;
-        
+        public double Value { get; }
+
         public Number(double value)
         {
-            this.value = value;
+            Value = value;
         }
 
         public override string ToString()
-            => value.ToString();
+            => Value.ToString();
     }
 }
