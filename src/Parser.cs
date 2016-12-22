@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using Scheme.Storage;
+using System.Text.RegularExpressions;
 
 namespace Scheme
 {
@@ -14,11 +14,16 @@ namespace Scheme
             this.source = source;
         }
 
-        public ConsCell Parse()
+        public IEnumerable<Object> Parse()
         {
             var tokens = Tokenize(source);
             this.tokens = new Queue<string>(tokens);
-            return Read();
+            var topLevel = Read();
+            while (topLevel != ConsCell.Nil)
+            {
+                yield return topLevel.Car;
+                topLevel = (ConsCell)topLevel.Cdr;
+            }
         }
 
         private string[] Tokenize(string source)

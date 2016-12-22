@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Scheme.Storage
@@ -6,8 +7,12 @@ namespace Scheme.Storage
     {
         private static Dictionary<string, Identifier> pool = new Dictionary<string, Identifier>();
 
-        private Identifier(string value) : base(value)
-        { }
+        private readonly string value;
+
+        private Identifier(string value)
+        {
+            this.value = value;
+        }
 
         public static Identifier FromString(string input)
         {
@@ -16,5 +21,8 @@ namespace Scheme.Storage
                 pool.Add(input, new Identifier(input));
             return pool[input];
         }
+
+        public override string ToString()
+            => value;
     }
 }

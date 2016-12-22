@@ -4,6 +4,8 @@ namespace Scheme.Storage
 {
     internal sealed class ConsCell : Object
     {
+        public static ConsCell Nil = new ConsCell(null, null);
+        
         public Object Car { get; private set; }
         public Object Cdr { get; private set; }
 
@@ -16,7 +18,5 @@ namespace Scheme.Storage
 
         public override string ToString()
             => (this == Nil)? "()" : $"({Car} . {Cdr})";
-
-        public static ConsCell Nil = new ConsCell(null, null);
     }
 }

@@ -4,10 +4,13 @@ namespace Scheme.Storage
 {
     internal sealed class String : Atom
     {
-        public String(string value) : base(value)
-        { }
+        private readonly string value;
+        public String(string value)
+        {
+            this.value = value;
+        }
 
         public override string ToString()
-            => $"\"{Value}\"";
+            => $"\"{value}\"";
     }
 }
