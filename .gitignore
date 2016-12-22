@@ -1,9 +1,8 @@
-### VisualStudioCode ###
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
-### Dotnet Core ###
+*.swp
+*.*~
+bin/
+obj/
 project.lock.json
+.DS_Store
+*.pyc
+.vscode
