@@ -17,31 +17,34 @@ namespace Scheme
             ["pair?"] = IsPair
         };
 
-        private static Object Quote(Object args, Environment env)
+        private static Object Quote(Object argList, Environment env)
         {
-            bool noArg = args is Nil;
-            if (noArg)
-                throw new System.ArgumentException("Wrong number of argument: 1 expected instead of 0.");
-            if (!(args is ConsCell))
-                throw new SyntaxException("Wrong syntax for function invocation.");
-            var ccArgs = (ConsCell)args;
-            bool oneArg = ccArgs.Cdr is Nil;
-            if (!oneArg)
-                throw new System.ArgumentException("Wrong number of argument: 1 expected.");
-            return ccArgs.Car;
+            var args = GetArgs(argList).ToArray();
+            if (args.Length != 1)
+                throw new System.ArgumentException($"Wrong number of arguments: 1 expected instead of {args.Length}.");
+                
+            return args[0];
         }
 
-
-
-        private static Object IsPair(Object args, Environment env)
+        private static IEnumerable<Object> GetArgs(Object args)
         {
+            if (args is Nil)
+                yield break;
+            if (!(args is ConsCell))
+                throw new SyntaxException("Wrong syntax for procedure call.");
             var ccArgs = (ConsCell)args;
-            bool onlyOneArg = ccArgs.Cdr is Nil;
-            if (!onlyOneArg)
-                throw new System.ArgumentException("Wrong number of argument: 1 expected.");
-                // TODO: Add number of args and procedure name in debug information.
+            yield return ccArgs.Car;
+            foreach (var arg in GetArgs(ccArgs.Cdr))
+                yield return arg;
+        }
 
-            var result = Interpreter.Evaluate(ccArgs.Car, env);
+        private static Object IsPair(Object argList, Environment env)
+        {
+            var args = GetArgs(argList).ToArray();
+            if (args.Length != 1)
+                throw new System.ArgumentException($"Wrong number of arguments: 1 expected instead of {args.Length}.");
+
+            var result = Interpreter.Evaluate(args[0], env);
             bool isPair = result is ConsCell;
             return Boolean.FromBool(isPair);
         }
