@@ -1,12 +1,5 @@
 "use strict";
 
-function tokenize(input) {
-    return input.replace(/\(/g, ' ( ')
-        .replace(/\)/g, ' ) ')
-        .trim()
-        .split(/\s+/);
-}
-
 var Atom = function (type, value) {
     this.type = type;
     this.value = value;
@@ -15,11 +8,11 @@ var Atom = function (type, value) {
 Atom.fromToken = function (token) {
     var isAValidNumber = !isNaN(parseFloat(token));
     if (isAValidNumber)
-        return new Atom('number', parseFloat(token));
+        return new Atom('literal', parseFloat(token));
 
     var isAValidString = token[0] === '"' && token.slice(-1) === '"';
     if (isAValidString)
-        return new Atom('string', token.slice(1, -1));
+        return new Atom('literal', token.slice(1, -1));
     
     var isValidIdentifier = true;
     // TODO: implement.
@@ -30,12 +23,14 @@ Atom.fromToken = function (token) {
 };
 
 Atom.prototype.toString = function () {
-    if (this.type === 'string')
+    if (typeof this.value === 'string')
         return '"' + this.value + '"';
+    if (this.value === null)
+        return '()';
     return this.value;
 };
 
-const NIL = new Atom('NIL', 'NIL');
+const NIL = new Atom('NIL', null);
 
 var Pair = function (car, cdr) {
     this.car = car;
@@ -45,6 +40,13 @@ var Pair = function (car, cdr) {
 Pair.prototype.toString = function () {
     return '(' + this.car.toString() + ' . ' + this.cdr.toString() + ')';
 };
+
+function tokenize(input) {
+    return input.replace(/\(/g, ' ( ')
+        .replace(/\)/g, ' ) ')
+        .trim()
+        .split(/\s+/);
+}
 
 function read(tokens) {
     var token = tokens.shift();
@@ -62,8 +64,3 @@ function read(tokens) {
     cdr = read(tokens);
     return new Pair(car, cdr);
 }
-
-var tokens = tokenize('((1 "2") 3 4)');
-console.log(tokens);
-var structure = read(tokens);
-console.log(structure.toString());
