@@ -11,9 +11,6 @@ namespace Scheme.Storage
             this.value = value;
         }
 
-        public override Object Evaluate(Environment enviroment)
-            => this;
-
         public override string ToString()
             => value.ToString();
     }

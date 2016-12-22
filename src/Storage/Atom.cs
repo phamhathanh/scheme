@@ -15,10 +15,10 @@ namespace Scheme.Storage
             if (isString)
                 return new String(input.Substring(1, input.Length - 2));
 
-            bool isValidIdentifier = true;
+            bool isValidSymbol = true;
             // TODO: validate.
-            if (isValidIdentifier)
-                return Identifier.FromString(input);
+            if (isValidSymbol)
+                return Symbol.FromString(input);
 
             throw new FormatException();
         }

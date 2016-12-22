@@ -16,9 +16,6 @@ namespace Scheme.Storage
         public Object Invoke(Object arguments, Environment environment)
             => function.Invoke(arguments, environment);
 
-        public override Object Evaluate(Environment environment)
-            => this;
-
         public override string ToString()
             => "Lambda.";
         // Should include id or something.

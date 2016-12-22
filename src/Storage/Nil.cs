@@ -9,9 +9,6 @@ namespace Scheme.Storage
         private Nil()
         { }
 
-        public override Object Evaluate(Environment enviroment)
-            => this;
-
         public override string ToString()
             => "()";
     }

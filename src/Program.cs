@@ -7,7 +7,7 @@ namespace Scheme
     {
         public static void Main(string[] args)
         {
-            var source = "(quote (1))";
+            var source = "(pair? (quote (2 2)))";
             var parser = new Parser(source);
             var data = parser.Parse().ToArray();
             foreach (var datum in data)
@@ -19,7 +19,7 @@ namespace Scheme
                 Object result = null;
                 foreach (var datum in data)
                     result = Interpreter.Interpret(datum);
-                Console.WriteLine(result);
+                Console.WriteLine($"=> {result}");
             }
             catch (Exception exception)
             {
