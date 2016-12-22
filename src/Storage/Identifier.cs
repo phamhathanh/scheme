@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Scheme.Lexicon
+namespace Scheme.Storage
 {
     internal sealed class Identifier : Atom
     {

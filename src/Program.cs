@@ -8,9 +8,8 @@ namespace Scheme
         {
             var source = "abc ((1 \"2\") 3 4)";
             var parser = new Parser(source);
-            Console.WriteLine(parser.Parse());
-            //var data = Read(tokens);
-            //Console.WriteLine(data.ToString());
+            var data = parser.Parse();
+            Console.WriteLine(data);
             //Interpret(data);
         }
     }

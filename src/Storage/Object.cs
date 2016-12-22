@@ -1,6 +1,6 @@
 using System;
 
-namespace Scheme.Lexicon
+namespace Scheme.Storage
 {
     internal abstract class Object
     { }

@@ -1,13 +1,13 @@
 using System;
 
-namespace Scheme.Lexicon
+namespace Scheme.Storage
 {
-    internal sealed class Pair : Object
+    internal sealed class ConsCell : Object
     {
         public Object Car { get; private set; }
         public Object Cdr { get; private set; }
 
-        public Pair(Object car, Object cdr)
+        public ConsCell(Object car, Object cdr)
         {
             // Check if null.
             Car = car;
@@ -17,6 +17,6 @@ namespace Scheme.Lexicon
         public override string ToString()
             => (this == Nil)? "()" : $"({Car} . {Cdr})";
 
-        public static Pair Nil = new Pair(null, null);
+        public static ConsCell Nil = new ConsCell(null, null);
     }
 }

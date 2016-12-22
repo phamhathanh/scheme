@@ -1,6 +1,6 @@
 using System;
 
-namespace Scheme.Lexicon
+namespace Scheme.Storage
 {
     internal class Atom : Object
     {
@@ -16,11 +16,11 @@ namespace Scheme.Lexicon
             double number;
             bool isNumber = Double.TryParse(input, out number);
             if (isNumber)
-                return new Literal(number);
+                return new Number(number);
 
             bool isString = input[0] == '"' && input[input.Length - 1] == '"';
             if (isString)
-                return new Literal(input);
+                return new String(input.Substring(1, input.Length - 2));
 
             bool isValidIdentifier = true;
             // TODO: validate.

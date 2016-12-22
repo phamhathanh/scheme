@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Scheme.Lexicon;
+using Scheme.Storage;
 
 namespace Scheme
 {
@@ -14,7 +14,7 @@ namespace Scheme
             this.source = source;
         }
 
-        public Pair Parse()
+        public ConsCell Parse()
         {
             var tokens = Tokenize(source);
             this.tokens = new Queue<string>(tokens);
@@ -33,24 +33,24 @@ namespace Scheme
             return multispaces.Split(temp);
         }
 
-        private Pair Read()
+        private ConsCell Read()
         {
             if (tokens.Count == 0)
-                return Pair.Nil;
+                return ConsCell.Nil;
             var token = tokens.Dequeue();
             Object car, cdr;
             if (token == "(")
             {
                 car = Read();
                 cdr = Read();
-                return new Pair(car, cdr);
+                return new ConsCell(car, cdr);
             }
             if (token == ")")
-                return Pair.Nil;
+                return ConsCell.Nil;
 
             car = Atom.Parse(token);
             cdr = Read();
-            return new Pair(car, cdr);
+            return new ConsCell(car, cdr);
         }
     }
 }
