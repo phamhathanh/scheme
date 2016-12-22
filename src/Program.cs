@@ -7,7 +7,7 @@ namespace Scheme
     {
         public static void Main(string[] args)
         {
-            var source = "(pair? (quote (2 2)))";
+            var source = "((lambda (x) x) 2)";
             var parser = new Parser(source);
             var data = parser.Parse().ToArray();
             foreach (var datum in data)

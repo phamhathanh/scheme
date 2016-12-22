@@ -17,7 +17,7 @@ namespace Scheme.Storage
             => function.Invoke(argumentList, environment);
 
         public override string ToString()
-            => "Lambda.";
-        // Should include id or something.
+            => "#<procedure>";
+        // Doesn't look good.
     }
 }

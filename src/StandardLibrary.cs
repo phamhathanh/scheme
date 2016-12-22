@@ -12,60 +12,93 @@ namespace Scheme
 
         private static Dictionary<string, Procedure.Function> procedures =
                     new Dictionary<string, Procedure.Function>
-        {
-            ["quote"] = Quote,
-            ["pair?"] = IsPair
-        };
+                    {
+                        ["quote"] = Quote,
+                        ["pair?"] = IsPair,
+                        ["lambda"] = Lambda
+                    };
 
         private static Object Quote(Object argList, Environment env)
         {
             var args = GetArgs(argList).ToArray();
-            if (args.Length != 1)
-                throw new System.ArgumentException($"Wrong number of arguments: 1 expected instead of {args.Length}.");
-                
+            ValidateArgCount(1, args.Length);
+
             return args[0];
         }
 
         private static IEnumerable<Object> GetArgs(Object args)
         {
-            if (args is Nil)
-                yield break;
-            if (!(args is ConsCell))
+            try
+            {
+                return GetListItems(args);
+            }
+            catch (System.ArgumentException)
+            {
                 throw new SyntaxException("Wrong syntax for procedure call.");
-            var ccArgs = (ConsCell)args;
-            yield return ccArgs.Car;
-            foreach (var arg in GetArgs(ccArgs.Cdr))
-                yield return arg;
+            }
+        }
+
+        private static IEnumerable<Object> GetListItems(Object head)
+        {
+            var current = head;
+            while (true)
+            {
+                if (current is Nil)
+                    yield break;
+                if (!(current is ConsCell))
+                    throw new System.ArgumentException("Not a list.");
+                var ccCurrent = (ConsCell)current;
+                yield return ccCurrent.Car;
+                current = ccCurrent.Cdr;
+            }
+        }
+
+        private static void ValidateArgCount(int expected, int actual)
+        {
+            if (actual == expected)
+                return;
+            var message = $"Wrong number of arguments: {expected} expected instead of {actual}.";
+            throw new System.ArgumentException(message);
         }
 
         private static Object IsPair(Object argList, Environment env)
         {
             var args = GetArgs(argList).ToArray();
-            if (args.Length != 1)
-                throw new System.ArgumentException($"Wrong number of arguments: 1 expected instead of {args.Length}.");
+            ValidateArgCount(1, args.Length);
 
             var result = Interpreter.Evaluate(args[0], env);
             bool isPair = result is ConsCell;
             return Boolean.FromBool(isPair);
         }
 
-/*
-        private static Object Lambda(Object args)
+        private static Object Lambda(Object argList, Environment env)
         {
-            // TODO: Validate.
-            var ccArgs = (ConsCell)args;
-            var formals = ccArgs.Car;
+            var args = GetArgs(argList).ToArray();
+            if (args.Length < 2)
+                throw new System.ArgumentException(
+                    $"Wrong number of arguments: At least 2 expected instead of {args.Length}.");
 
-            // Assuming formals is list.
-            var bindings = formals
-            var lambdaScope = new Environment()
+            var formals = args.First();
+            var body = args.Skip(1);
 
-            var body = ccArgs.Cdr;
-            
-            return new Procedure((a, e) => {
+            // Assuming formal list only.
+            // TODO: consider formals forms.
+            // TODO: validate if items are identifiers.
+            var symbols = from item in GetListItems(formals)
+                          select (Symbol)item;
 
+            return new Procedure((_argList, _env) =>
+            {
+                // TODO: Validate many things...
+                var _args = GetListItems(_argList);
+                var bindings = symbols.Zip(_args, (s, a) => new { Key = s, Value = a })
+                        .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                var lambdaEnv = new Environment(bindings, _env);
+                Object result = null;
+                foreach (var expression in body)
+                    result = Interpreter.Evaluate(expression, lambdaEnv);
+                return result;
             });
         }
-            */
     }
 }

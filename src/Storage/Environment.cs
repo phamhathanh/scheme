@@ -20,7 +20,7 @@ namespace Scheme.Storage
                 return bindings[symbol];
             if (parent != null)
                 return parent.LookUp(symbol);
-            throw new ArgumentException($"Unbounded symbol: {symbol}");
+            throw new ArgumentException($"Unbounded identifier: {symbol}");
         }
     }
 }
