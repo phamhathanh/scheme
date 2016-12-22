@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 
 namespace Scheme.Storage
 {
@@ -15,6 +16,21 @@ namespace Scheme.Storage
         }
 
         public override string ToString()
-            => $"({Car} . {Cdr})";
+        {
+            var output = new StringBuilder($"({Car}");
+            var current = Cdr;
+            while (current is ConsCell)
+            {
+                var cc = (ConsCell)current;
+                output.Append($" {cc.Car}");
+                current = cc.Cdr;
+            }
+            if (current is Nil)
+                output.Append(')');
+            else
+                output.Append($" . {current})");
+            return output.ToString();
+            // TODO: Circular list case.
+        }
     }
 }
