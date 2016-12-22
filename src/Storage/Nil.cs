@@ -10,9 +10,7 @@ namespace Scheme.Storage
         { }
 
         public override Object Evaluate(Environment enviroment)
-        {
-            throw new SemanticException();
-        }
+            => this;
 
         public override string ToString()
             => "()";

@@ -14,10 +14,10 @@ namespace Scheme
             => args;
             // TODO: Validate: 1 arg only.
 
+/*
         private static Object IsPair(Object args, Environment env)
             => args
 
-/*
         private static Object Lambda(Object args)
         {
             // TODO: Validate.

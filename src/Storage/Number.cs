@@ -2,11 +2,11 @@ using System;
 
 namespace Scheme.Storage
 {
-    internal sealed class NumberLiteral : Atom
+    internal sealed class Number : Atom
     {
         private readonly double value;
         
-        public NumberLiteral(double value)
+        public Number(double value)
         {
             this.value = value;
         }
