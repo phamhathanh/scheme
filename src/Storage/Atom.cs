@@ -11,7 +11,7 @@ namespace Scheme.Storage
             if (isNumber)
                 return new Number(number);
 
-            bool isString = input[0] == '"' && input[input.Length - 1] == '"';
+            bool isString = input.Length > 2 && input[0] == '"' && input[input.Length - 1] == '"';
             if (isString)
                 return new String(input.Substring(1, input.Length - 2));
 
