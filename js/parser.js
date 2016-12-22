@@ -10,9 +10,28 @@ function tokenize(input) {
 var Atom = function (type, value) {
     this.type = type;
     this.value = value;
-}
+};
+
+Atom.fromToken = function (token) {
+    var isAValidNumber = !isNaN(parseFloat(token));
+    if (isAValidNumber)
+        return new Atom('number', parseFloat(token));
+
+    var isAValidString = token[0] === '"' && token.slice(-1) === '"';
+    if (isAValidString)
+        return new Atom('string', token.slice(1, -1));
+    
+    var isValidIdentifier = true;
+    // TODO: implement.
+    if (isValidIdentifier)
+        return new Atom('identifier', token);
+        
+    throw 'Parse Exception.';
+};
 
 Atom.prototype.toString = function () {
+    if (this.type === 'string')
+        return '"' + this.value + '"';
     return this.value;
 };
 
@@ -27,20 +46,20 @@ Pair.prototype.toString = function () {
     return '(' + this.car.toString() + ' . ' + this.cdr.toString() + ')';
 };
 
-function read(input) {
-    var token = input.shift();
+function read(tokens) {
+    var token = tokens.shift();
     if (token === undefined)
         return NIL;
     if (token === '(') {
-        var car = read(input);
-        var cdr = read(input);
+        var car = read(tokens);
+        var cdr = read(tokens);
         return new Pair(car, cdr);
     }
     if (token === ')')
         return NIL;
 
-    car = new Atom('atom', token);
-    cdr = read(input);
+    car = Atom.fromToken(token);
+    cdr = read(tokens);
     return new Pair(car, cdr);
 }
 
