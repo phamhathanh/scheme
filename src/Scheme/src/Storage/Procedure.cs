@@ -1,10 +1,10 @@
-using System;
+using System.Collections.Generic;
 
 namespace Scheme.Storage
 {
     internal sealed class Procedure : Atom
     {
-        public delegate Object Function(Object argumentList, Environment environment);
+        public delegate Object Function(IEnumerable<Object> arguments, Environment environment);
 
         private readonly Function function;
 
@@ -13,8 +13,8 @@ namespace Scheme.Storage
             this.function = function;
         }
 
-        public Object Invoke(Object argumentList, Environment environment)
-            => function.Invoke(argumentList, environment);
+        public Object Invoke(IEnumerable<Object> arguments, Environment environment)
+            => function.Invoke(arguments, environment);
 
         public override string ToString()
             => "#<procedure>";

@@ -19,28 +19,12 @@ namespace Scheme
                         ["lambda"] = Lambda
                     };
 
-        private static Object Quote(Object argList, Environment env)
+        private static Object Quote(IEnumerable<Object> args, Environment env)
         {
-            var args = GetArgs(argList).ToArray();
-            ValidateArgCount(1, args.Length);
+            var argsArray = args.ToArray();
+            ValidateArgCount(1, argsArray.Length);
 
-            return args[0];
-        }
-
-        private static IEnumerable<Object> GetArgs(Object args)
-        {
-            try
-            {
-                if (args is Nil)
-                    return Enumerable.Empty<Object>();
-                if (!(args is ConsCell))
-                    throw new SyntaxException("Wrong syntax for procedure call.");
-                return ((ConsCell)args).GetListItems();
-            }
-            catch (System.InvalidOperationException)
-            {
-                throw new SyntaxException("Wrong syntax for procedure call.");
-            }
+            return argsArray[0];
         }
 
         private static void ValidateArgCount(int expected, int actual)
@@ -51,30 +35,29 @@ namespace Scheme
             throw new System.ArgumentException(message);
         }
 
-        private static Object IsPair(Object argList, Environment env)
+        private static Object IsPair(IEnumerable<Object> args, Environment env)
         {
-            var args = GetArgs(argList).ToArray();
-            ValidateArgCount(1, args.Length);
+            var argsArray = args.ToArray();
+            ValidateArgCount(1, argsArray.Length);
 
-            var result = Evaluator.Evaluate(args[0], env);
+            var result = Evaluator.Evaluate(argsArray[0], env);
             bool isPair = result is ConsCell;
             return Boolean.FromBool(isPair);
         }
 
-        private static Object Plus(Object argList, Environment env)
+        private static Object Plus(IEnumerable<Object> args, Environment env)
         {
             // TODO: Validate: number.
-            var args = GetArgs(argList);
             var result = args.Sum(arg => ((Number)Evaluator.Evaluate(arg, env)).Value);
             return new Number(result);
         }
 
-        private static Object Lambda(Object argList, Environment env)
+        private static Object Lambda(IEnumerable<Object> args, Environment env)
         {
-            var args = GetArgs(argList).ToArray();
-            if (args.Length < 2)
+            var argsArray = args.ToArray();
+            if (argsArray.Length < 2)
                 throw new System.ArgumentException(
-                    $"Wrong number of arguments: At least 2 expected instead of {args.Length}.");
+                    $"Wrong number of arguments: At least 2 expected instead of {argsArray.Length}.");
 
             var formals = args.First();
             var body = args.Skip(1);
@@ -85,10 +68,9 @@ namespace Scheme
             var symbols = from item in ((ConsCell)formals).GetListItems()
                           select (Symbol)item;
 
-            return new Procedure((_argList, _env) =>
+            return new Procedure((_args, _env) =>
             {
                 // TODO: Validate many things...
-                var _args = ((ConsCell)_argList).GetListItems();
                 var bindings = symbols.Zip(_args, (s, a) => new { Key = s, Value = a })
                         .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                 var lambdaEnv = new Environment(bindings, _env);

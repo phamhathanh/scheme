@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Scheme.Storage;
 
 namespace Scheme
@@ -37,15 +39,30 @@ namespace Scheme
             if (_operator is Procedure)
             {
                 var procedure = (Procedure)_operator;
-                var args = expression.Cdr;
-                // TODO: Check args form.
-                bool argsIsValid = (args is ConsCell) || (args is Nil);
-                if (!argsIsValid)
+                IEnumerable<Object> args;
+                if (expression.Cdr is Nil)
+                    args = Enumerable.Empty<Object>();
+                else if (expression.Cdr is ConsCell)
+                    args = GetArgs((ConsCell)expression.Cdr);
+                else
                     throw new SyntaxException($"Syntax error: Invalid expression.");
+
                 return procedure.Invoke(args, environment);
             }
 
             throw new System.NotImplementedException();
+        }
+
+        private static IEnumerable<Object> GetArgs(ConsCell args)
+        {
+            try
+            {
+                return args.GetListItems();
+            }
+            catch (System.InvalidOperationException)
+            {
+                throw new SyntaxException("Syntax error: Invalid expression.");
+            }
         }
 
         private static Object Evaluate(Symbol symbol, Environment environment)
