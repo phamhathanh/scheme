@@ -2,7 +2,7 @@ using System;
 
 namespace Scheme.Storage
 {
-    internal sealed class Boolean : Atom
+    public sealed class Boolean : Atom
     {
         public static readonly Boolean TRUE = new Boolean(true),
                                     FALSE = new Boolean(false);

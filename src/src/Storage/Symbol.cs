@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Scheme.Storage
 {
-    internal sealed class Symbol : Atom
+    public sealed class Symbol : Atom
     {
         private static Dictionary<string, Symbol> pool = new Dictionary<string, Symbol>();
 

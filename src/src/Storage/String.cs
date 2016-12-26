@@ -2,7 +2,7 @@ using System;
 
 namespace Scheme.Storage
 {
-    internal sealed class String : Atom
+    public sealed class String : Atom
     {
         private readonly string value;
         

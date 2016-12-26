@@ -2,7 +2,7 @@ using System;
 
 namespace Scheme.Storage
 {
-    internal sealed class Number : Atom
+    public sealed class Number : Atom
     {
         public double Value { get; }
 
