@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace Scheme
 {
-    public class Parser
+    internal class Parser
     {
         private readonly string source;
         private Queue<string> tokens;

@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Linq;
+using Scheme;
 
-namespace Scheme
+namespace Scheme.REPL
 {
     public class Program
     {
@@ -12,13 +12,9 @@ namespace Scheme
                 Console.WriteLine();
                 Console.Write("> ");
                 var source = Console.ReadLine();
-                var parser = new Parser(source);
-                var data = parser.Parse().ToArray();
                 try
                 {
-                    Object result = null;
-                    foreach (var datum in data)
-                        result = Evaluator.Evaluate(datum);
+                    var result = Interpreter.Interpret(source);
                     Console.WriteLine($"=> {result}");
                 }
                 catch (Exception exception)
