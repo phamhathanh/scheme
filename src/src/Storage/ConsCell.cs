@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Scheme.Storage
 {
-    public sealed class ConsCell : Object
+    internal sealed class ConsCell : Object
     {
         public Object Car { get; private set; }
         public Object Cdr { get; private set; }

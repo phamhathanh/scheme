@@ -2,7 +2,7 @@ using System;
 
 namespace Scheme.Storage
 {
-    public sealed class Procedure : Atom
+    internal sealed class Procedure : Atom
     {
         public delegate Object Function(Object argumentList, Environment environment);
 

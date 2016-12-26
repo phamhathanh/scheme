@@ -2,7 +2,7 @@ using System;
 
 namespace Scheme.Storage
 {
-    public abstract class Atom : Object
+    internal abstract class Atom : Object
     {
         public static Atom Parse(string input)
         {

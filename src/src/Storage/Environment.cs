@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Scheme.Storage
 {
-    public class Environment
+    internal class Environment
     {
         private readonly IDictionary<Symbol, Object> bindings;
         private readonly Environment parent;
