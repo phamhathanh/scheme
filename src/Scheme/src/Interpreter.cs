@@ -7,8 +7,7 @@ namespace Scheme
     {
         public static string Interpret(string source)
         {
-            var parser = new Parser(source);
-            var data = parser.Parse();
+            var data = Parser.Parse(source);
             Object result = null;
             foreach (var datum in data)
                 result = Evaluator.Evaluate(datum);

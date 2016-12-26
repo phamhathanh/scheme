@@ -1,23 +1,18 @@
 using System.Collections.Generic;
 using Scheme.Storage;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace Scheme
 {
-    internal class Parser
+    internal static class Parser
     {
-        private readonly string source;
-        private Queue<string> tokens;
+        private static Queue<string> tokens = new Queue<string>();
 
-        public Parser(string source)
+        public static IEnumerable<Object> Parse(string source)
         {
-            this.source = source;
-        }
-
-        public IEnumerable<Object> Parse()
-        {
-            var tokens = Tokenize(source);
-            this.tokens = new Queue<string>(tokens);
+            Debug.Assert(tokens.Count == 0);
+            tokens = new Queue<string>(Tokenize(source));
             var topLevel = Read();
             while (topLevel != Nil.Instance)
             {
@@ -27,7 +22,7 @@ namespace Scheme
             // Needs rework.
         }
 
-        private string[] Tokenize(string source)
+        private static string[] Tokenize(string source)
         {
             var openParens = new Regex(@"\(");
             var closeParens = new Regex(@"\)");
@@ -39,7 +34,7 @@ namespace Scheme
             return multispaces.Split(temp);
         }
 
-        private Object Read()
+        private static Object Read()
         {
             if (tokens.Count == 0)
                 return Nil.Instance;
