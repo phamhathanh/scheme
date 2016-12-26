@@ -18,7 +18,7 @@ namespace Scheme
                 {
                     Object result = null;
                     foreach (var datum in data)
-                        result = Interpreter.Interpret(datum);
+                        result = Evaluator.Evaluate(datum);
                     Console.WriteLine($"=> {result}");
                 }
                 catch (Exception exception)

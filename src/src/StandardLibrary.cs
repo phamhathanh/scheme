@@ -67,7 +67,7 @@ namespace Scheme
             var args = GetArgs(argList).ToArray();
             ValidateArgCount(1, args.Length);
 
-            var result = Interpreter.Evaluate(args[0], env);
+            var result = Evaluator.Evaluate(args[0], env);
             bool isPair = result is ConsCell;
             return Boolean.FromBool(isPair);
         }
@@ -76,7 +76,7 @@ namespace Scheme
         {
             // TODO: Validate: number.
             var args = GetArgs(argList);
-            var result = args.Sum(arg => ((Number)Interpreter.Evaluate(arg, env)).Value);
+            var result = args.Sum(arg => ((Number)Evaluator.Evaluate(arg, env)).Value);
             return new Number(result);
         }
 
@@ -105,7 +105,7 @@ namespace Scheme
                 var lambdaEnv = new Environment(bindings, _env);
                 Object result = null;
                 foreach (var expression in body)
-                    result = Interpreter.Evaluate(expression, lambdaEnv);
+                    result = Evaluator.Evaluate(expression, lambdaEnv);
                 return result;
             });
         }
