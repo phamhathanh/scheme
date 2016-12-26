@@ -31,26 +31,15 @@ namespace Scheme
         {
             try
             {
-                return GetListItems(args);
+                if (args is Nil)
+                    return Enumerable.Empty<Object>();
+                if (!(args is ConsCell))
+                    throw new SyntaxException("Wrong syntax for procedure call.");
+                return ((ConsCell)args).GetListItems();
             }
-            catch (System.ArgumentException)
+            catch (System.InvalidOperationException)
             {
                 throw new SyntaxException("Wrong syntax for procedure call.");
-            }
-        }
-
-        private static IEnumerable<Object> GetListItems(Object head)
-        {
-            var current = head;
-            while (true)
-            {
-                if (current is Nil)
-                    yield break;
-                if (!(current is ConsCell))
-                    throw new System.ArgumentException("Not a list.");
-                var ccCurrent = (ConsCell)current;
-                yield return ccCurrent.Car;
-                current = ccCurrent.Cdr;
             }
         }
 
@@ -93,13 +82,13 @@ namespace Scheme
             // Assuming formal list only.
             // TODO: consider formals forms.
             // TODO: validate if items are identifiers.
-            var symbols = from item in GetListItems(formals)
+            var symbols = from item in ((ConsCell)formals).GetListItems()
                           select (Symbol)item;
 
             return new Procedure((_argList, _env) =>
             {
                 // TODO: Validate many things...
-                var _args = GetListItems(_argList);
+                var _args = ((ConsCell)_argList).GetListItems();
                 var bindings = symbols.Zip(_args, (s, a) => new { Key = s, Value = a })
                         .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                 var lambdaEnv = new Environment(bindings, _env);
