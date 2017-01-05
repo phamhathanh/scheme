@@ -12,10 +12,11 @@ namespace Scheme
             var parser = new Parser();
             var data = parser.Parse(source);
             var globalEnvironment = new Environment(StandardLibrary.Procedures, null);
+            
             Object result = null;
             foreach (var datum in data)
                 result = datum.Evaluate(globalEnvironment);
-            return result.ToString();
+            return result?.ToString();
         }
     }
 }

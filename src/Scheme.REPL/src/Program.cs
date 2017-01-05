@@ -7,6 +7,7 @@ namespace Scheme.REPL
     {
         public static void Main(string[] args)
         {
+            var interpreter = new Interpreter();
             while (true)
             {
                 Console.WriteLine();
@@ -14,12 +15,17 @@ namespace Scheme.REPL
                 var source = Console.ReadLine();
                 try
                 {
-                    var result = Interpreter.Interpret(source);
-                    Console.WriteLine($"=> {result}");
+                    var result = interpreter.Interpret(source);
+                    if (result != null)
+                        Console.WriteLine($"=> {result}");
+                    // TODO: Preserve program state.
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine(exception.Message);
+                    Console.WriteLine(exception);
+                    return;
+                    // TODO: Do something about the invalid state.
+                    //       Rollback for example.
                 }
             }
         }
