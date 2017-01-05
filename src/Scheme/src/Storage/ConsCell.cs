@@ -67,6 +67,16 @@ namespace Scheme.Storage
             }
         }
 
+        public bool CheckIfIsList()
+        {
+            if (this == Nil)
+                return true;
+            if (!(Cdr is ConsCell))
+                return false;
+            return ((ConsCell)Cdr).CheckIfIsList();
+            // TODO: Circular list case.
+        }
+
         public override sealed string ToString()
         {
             if (this == Nil)

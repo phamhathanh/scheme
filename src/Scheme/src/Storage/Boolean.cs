@@ -30,17 +30,7 @@ namespace Scheme.Storage
         }
 
         public static Boolean FromBool(bool input)
-        {
-            switch (input)
-            {
-                case true:
-                    return TRUE;
-                case false:
-                    return FALSE;
-                default:
-                    throw new FormatException();
-            }
-        }
+            => (input)? TRUE : FALSE;
 
         public override sealed Object Evaluate(Environment environment)
             => this;
