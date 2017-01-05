@@ -18,20 +18,6 @@ namespace Scheme.Storage
             Cdr = cdr;
         }
 
-        public IEnumerable<Object> GetListItems()
-        {
-            ConsCell current = this;
-            while (true)
-            {
-                if (current == Nil)
-                    yield break;
-                yield return current.Car;
-                if (!(current.Cdr is ConsCell))
-                    throw new System.InvalidOperationException("This is not a list.");
-                current = (ConsCell)current.Cdr;
-            }
-        }
-
         public override sealed Object Evaluate(Environment environment)
         {
             if (this == Nil)
@@ -45,11 +31,12 @@ namespace Scheme.Storage
 
             if (!(_operator is Procedure))
                 throw new SemanticException($"Syntax error: {operatorExpression} does not evaluate to a procedure or macro.");
+                // TODO: Add macro.
 
             var procedure = (Procedure)_operator;
+
             if (!(Cdr is ConsCell))
                 throw new SyntaxException($"Syntax error: Invalid expression.");
-            // TODO: use (list? ).
 
             var args = GetArgs((ConsCell)Cdr);
             return procedure.Invoke(args, environment);
@@ -64,6 +51,20 @@ namespace Scheme.Storage
             catch (System.InvalidOperationException)
             {
                 throw new SyntaxException("Syntax error: Invalid expression.");
+            }
+        }
+
+        public IEnumerable<Object> GetListItems()
+        {
+            ConsCell current = this;
+            while (true)
+            {
+                if (current == Nil)
+                    yield break;
+                yield return current.Car;
+                if (!(current.Cdr is ConsCell))
+                    throw new System.InvalidOperationException("This is not a list.");
+                current = (ConsCell)current.Cdr;
             }
         }
 
