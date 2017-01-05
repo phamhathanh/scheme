@@ -5,11 +5,11 @@ using System.Diagnostics;
 
 namespace Scheme
 {
-    internal static class Parser
+    internal class Parser
     {
-        private static Queue<string> tokens = new Queue<string>();
+        private Queue<string> tokens = new Queue<string>();
 
-        public static IEnumerable<Object> Parse(string source)
+        public IEnumerable<Object> Parse(string source)
         {
             Debug.Assert(tokens.Count == 0);
             tokens = new Queue<string>(Tokenize(source));
@@ -22,7 +22,7 @@ namespace Scheme
             // Needs rework.
         }
 
-        private static string[] Tokenize(string source)
+        private string[] Tokenize(string source)
         {
             var openParens = new Regex(@"\(");
             var closeParens = new Regex(@"\)");
@@ -34,7 +34,7 @@ namespace Scheme
             return multispaces.Split(temp);
         }
 
-        private static Object Read()
+        private Object Read()
         {
             if (tokens.Count == 0)
                 return Nil.Instance;

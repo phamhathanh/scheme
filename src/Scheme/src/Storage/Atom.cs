@@ -7,7 +7,7 @@ namespace Scheme.Storage
         public static Atom Parse(string input)
         {
             double number;
-            bool isNumber = Double.TryParse(input, out number);
+            bool isNumber = double.TryParse(input, out number);
             if (isNumber)
                 return new Number(number);
 
@@ -15,12 +15,10 @@ namespace Scheme.Storage
             if (isString)
                 return new String(input.Substring(1, input.Length - 2));
 
-            bool isValidSymbol = true;
-            // TODO: validate.
-            if (isValidSymbol)
-                return Symbol.FromString(input);
+            if (Symbol.IsValid(input))
+                return new Symbol(input);
 
-            throw new FormatException();
+            throw new SyntaxException("Incorrect atom format.");
         }
     }
 }

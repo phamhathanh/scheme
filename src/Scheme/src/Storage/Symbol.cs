@@ -1,28 +1,41 @@
-using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Scheme.Storage
 {
     internal sealed class Symbol : Atom
     {
-        private static Dictionary<string, Symbol> pool = new Dictionary<string, Symbol>();
-
         private readonly string value;
 
-        private Symbol(string value)
+        public Symbol(string value)
         {
+            if (!Symbol.IsValid(value))
+                throw new System.ArgumentException("Invalid symbol.");
+
             this.value = value;
         }
 
-        public static Symbol FromString(string input)
+        public static bool IsValid(string input)
         {
-            // TODO: Validate.
-            bool exists = pool.ContainsKey(input);
-            if (!exists)
-                pool.Add(input, new Symbol(input));
-            return pool[input];
+            if (input == ".")
+                return false;
+
+            var letters = "A-Z a-z";
+            var digits = "0-9";
+            var extendedCharacters = @"! $ % & * + - . / : < = > ? @ ^ _ ~";
+            var regex = new Regex($"^[{letters}{digits}{extendedCharacters}]+$");
+            return regex.IsMatch(input);
         }
+
+        public override Object Evaluate(Environment environment)
+            => environment.LookUp(this);
 
         public override string ToString()
             => value;
+
+        public override bool Equals(object other)
+            => other is Symbol && ((Symbol)other).value == this.value;
+
+        public override int GetHashCode()
+            => value.GetHashCode();
     }
 }

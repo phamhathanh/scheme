@@ -16,8 +16,12 @@ namespace Scheme.Storage
         public Object Invoke(IEnumerable<Object> arguments, Environment environment)
             => function.Invoke(arguments, environment);
 
+        public override sealed Object Evaluate(Environment environment)
+            => this;
+            // Not sure if this can be evaluated.
+
         public override string ToString()
             => "#<procedure>";
-        // Doesn't look good.
+        // TODO: Change representation.
     }
 }

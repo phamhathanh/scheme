@@ -9,6 +9,11 @@ namespace Scheme.Storage
         private Nil()
         { }
 
+        public override sealed Object Evaluate(Environment environment)
+        {
+            throw new SyntaxException("Cannot evaluate nil.");
+        }
+
         public override string ToString()
             => "()";
     }

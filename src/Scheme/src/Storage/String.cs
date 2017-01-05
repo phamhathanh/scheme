@@ -11,7 +11,10 @@ namespace Scheme.Storage
             this.value = value;
         }
 
-        public override string ToString()
+        public override sealed Object Evaluate(Environment environment)
+            => this;
+
+        public override sealed string ToString()
             => $"\"{value}\"";
     }
 }

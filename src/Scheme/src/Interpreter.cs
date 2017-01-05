@@ -1,16 +1,20 @@
-using System.Diagnostics;
+using System.Collections.Generic;
 using Scheme.Storage;
+using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace Scheme
 {
-    public static class Interpreter
+    public class Interpreter
     {
-        public static string Interpret(string source)
+        public string Interpret(string source)
         {
-            var data = Parser.Parse(source);
+            var parser = new Parser();
+            var data = parser.Parse(source);
+            var globalEnvironment = new Environment(StandardLibrary.Procedures, null);
             Object result = null;
             foreach (var datum in data)
-                result = Evaluator.Evaluate(datum);
+                result = datum.Evaluate(globalEnvironment);
             return result.ToString();
         }
     }

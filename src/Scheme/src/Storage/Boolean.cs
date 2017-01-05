@@ -42,7 +42,10 @@ namespace Scheme.Storage
             }
         }
 
-        public override string ToString()
+        public override sealed Object Evaluate(Environment environment)
+            => this;
+
+        public override sealed string ToString()
             => (value)? "#t" : "#f";
     }
 }

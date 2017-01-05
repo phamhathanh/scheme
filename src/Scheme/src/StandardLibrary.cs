@@ -7,7 +7,7 @@ namespace Scheme
     internal static class StandardLibrary
     {
         public static Dictionary<Symbol, Object> Procedures
-            => procedures.ToDictionary(kvp => Symbol.FromString(kvp.Key),
+            => procedures.ToDictionary(kvp => new Symbol(kvp.Key),
                                     kvp => (Object)new Procedure(kvp.Value));
 
         private static Dictionary<string, Procedure.Function> procedures =
@@ -40,7 +40,7 @@ namespace Scheme
             var argsArray = args.ToArray();
             ValidateArgCount(1, argsArray.Length);
 
-            var result = Evaluator.Evaluate(argsArray[0], env);
+            var result = argsArray[0].Evaluate(env);
             bool isPair = result is ConsCell;
             return Boolean.FromBool(isPair);
         }
@@ -48,7 +48,7 @@ namespace Scheme
         private static Object Plus(IEnumerable<Object> args, Environment env)
         {
             // TODO: Validate: number.
-            var result = args.Sum(arg => ((Number)Evaluator.Evaluate(arg, env)).Value);
+            var result = args.Sum(arg => ((Number)arg.Evaluate(env)).Value);
             return new Number(result);
         }
 
@@ -63,7 +63,7 @@ namespace Scheme
             var body = args.Skip(1);
 
             // Assuming formal list only.
-            // TODO: consider formals forms.
+            // TODO: consider other forms.
             // TODO: validate if items are identifiers.
             var symbols = from item in ((ConsCell)formals).GetListItems()
                           select (Symbol)item;
@@ -76,7 +76,7 @@ namespace Scheme
                 var lambdaEnv = new Environment(bindings, _env);
                 Object result = null;
                 foreach (var expression in body)
-                    result = Evaluator.Evaluate(expression, lambdaEnv);
+                    result = expression.Evaluate(lambdaEnv);
                 return result;
             });
         }
