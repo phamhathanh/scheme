@@ -15,6 +15,7 @@ namespace Scheme
                     new Dictionary<string, Procedure.Function>
                     {
                         ["quote"] = Quote,
+                        ["define"] = Define,
                         ["+"] = Plus,
                         ["lambda"] = Lambda
                     };
@@ -33,6 +34,22 @@ namespace Scheme
                 return;
             var message = $"Wrong number of arguments: {expected} expected instead of {actual}.";
             throw new System.ArgumentException(message);
+        }
+
+        private static Object Define(IEnumerable<Object> args, Environment env)
+        {
+            var argsArray = args.ToArray();
+            ValidateArgCount(2, argsArray.Length);
+            // TODO: Other forms.
+            // TODO: Ensure this being called at the top only.
+
+            var variable = argsArray[0];
+            if (!(variable is Symbol))
+                throw new SyntaxException("Can only define variable.");
+
+            var value = argsArray[1].Evaluate(env);
+            env.SetBinding((Symbol)variable, value);
+            return null;
         }
 
         private static Object Plus(IEnumerable<Object> args, Environment env)

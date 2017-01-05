@@ -14,6 +14,9 @@ namespace Scheme.Storage
             this.parent = parent;
         }
 
+        public void SetBinding(Symbol symbol, Object value)
+            => bindings[symbol] = value;
+
         public Object LookUp(Symbol symbol)
         {
             if (bindings.ContainsKey(symbol))

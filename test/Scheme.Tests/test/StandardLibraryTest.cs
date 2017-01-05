@@ -16,6 +16,16 @@ namespace Scheme.Tests
         }
 
         [Fact]
+        public void DefineTest() 
+        {
+            var source = "(define abc 5) abc";
+            var interpreter = new Interpreter();
+            var result = interpreter.Interpret(source);
+            var expected = "5";
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
         public void PlusTest() 
         {
             var source = "(+ 1 2)";
