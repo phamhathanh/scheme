@@ -13,13 +13,8 @@ namespace Scheme
         {
             Debug.Assert(tokens.Count == 0);
             tokens = new Queue<string>(Tokenize(source));
-            var topLevel = Read();
-            while (topLevel != Nil.Instance)
-            {
-                yield return ((ConsCell)topLevel).Car;
-                topLevel = ((ConsCell)topLevel).Cdr;
-            }
-            // Needs rework.
+            var topLevelList = Read();
+            return topLevelList.GetListItems();
         }
 
         private string[] Tokenize(string source)
@@ -34,10 +29,10 @@ namespace Scheme
             return multispaces.Split(temp);
         }
 
-        private Object Read()
+        private ConsCell Read()
         {
             if (tokens.Count == 0)
-                return Nil.Instance;
+                return ConsCell.Nil;
             var token = tokens.Dequeue();
             Object car, cdr;
             if (token == "(")
@@ -47,7 +42,7 @@ namespace Scheme
                 return new ConsCell(car, cdr);
             }
             if (token == ")")
-                return Nil.Instance;
+                return ConsCell.Nil;
 
             car = Atom.Parse(token);
             cdr = Read();

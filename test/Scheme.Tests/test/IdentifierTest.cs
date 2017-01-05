@@ -10,8 +10,8 @@ namespace Scheme.Tests
             var source = "(quote abc$%^)";
             var interpreter = new Interpreter();
             var result = interpreter.Interpret(source);
-            var expectedResult = "abc$%^";
-            Assert.True(result == expectedResult);
+            var expected = "abc$%^";
+            Assert.Equal(expected, result);
         }
 
         [Fact]

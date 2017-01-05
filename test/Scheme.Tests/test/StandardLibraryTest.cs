@@ -11,8 +11,8 @@ namespace Scheme.Tests
             var source = "(+ 1 2)";
             var interpreter = new Interpreter();
             var result = interpreter.Interpret(source);
-            var expectedResult = "3";
-            Assert.True(result == expectedResult);
+            var expected = "3";
+            Assert.Equal(expected, result);
         }
 
         [Fact]
@@ -21,8 +21,8 @@ namespace Scheme.Tests
             var source = "(quote (1 2))";
             var interpreter = new Interpreter();
             var result = interpreter.Interpret(source);
-            var expectedResult = "(1 2)";
-            Assert.True(result == expectedResult);
+            var expected = "(1 2)";
+            Assert.Equal(expected, result);
         }
 
         [Fact]
@@ -31,8 +31,8 @@ namespace Scheme.Tests
             var source = "(pair? (quote (1 2)))";
             var interpreter = new Interpreter();
             var result = interpreter.Interpret(source);
-            var expectedResult = "#t";
-            Assert.True(result == expectedResult);
+            var expected = "#t";
+            Assert.Equal(expected, result);
         }
 
         [Fact]
@@ -41,8 +41,8 @@ namespace Scheme.Tests
             var source = "(pair? 2)";
             var interpreter = new Interpreter();
             var result = interpreter.Interpret(source);
-            var expectedResult = "#f";
-            Assert.True(result == expectedResult);
+            var expected = "#f";
+            Assert.Equal(expected, result);
         }
 
         [Fact]

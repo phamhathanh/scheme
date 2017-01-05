@@ -6,6 +6,8 @@ namespace Scheme.Storage
 {
     internal sealed class ConsCell : Object
     {
+        public static readonly ConsCell Nil = new ConsCell(null, null);
+
         public Object Car { get; private set; }
         public Object Cdr { get; private set; }
 
@@ -18,21 +20,23 @@ namespace Scheme.Storage
 
         public IEnumerable<Object> GetListItems()
         {
-            Object current = this;
+            ConsCell current = this;
             while (true)
             {
-                if (current is Nil)
+                if (current == Nil)
                     yield break;
-                if (!(current is ConsCell))
+                yield return current.Car;
+                if (!(current.Cdr is ConsCell))
                     throw new System.InvalidOperationException("This is not a list.");
-                var ccCurrent = (ConsCell)current;
-                yield return ccCurrent.Car;
-                current = ccCurrent.Cdr;
+                current = (ConsCell)current.Cdr;
             }
         }
 
         public override sealed Object Evaluate(Environment environment)
         {
+            if (this == Nil)
+                throw new SyntaxException("Cannot evaluate nil.");
+
             var operatorExpression = Car;
             Object _operator = operatorExpression;
             bool canBeEvaluated = operatorExpression is ConsCell || operatorExpression is Symbol;
@@ -43,14 +47,11 @@ namespace Scheme.Storage
                 throw new SemanticException($"Syntax error: {operatorExpression} does not evaluate to a procedure or macro.");
 
             var procedure = (Procedure)_operator;
-            IEnumerable<Object> args;
-            if (Cdr is Nil)
-                args = Enumerable.Empty<Object>();
-            else if (Cdr is ConsCell)
-                args = GetArgs((ConsCell)Cdr);
-            else
+            if (!(Cdr is ConsCell))
                 throw new SyntaxException($"Syntax error: Invalid expression.");
+            // TODO: use (list? ).
 
+            var args = GetArgs((ConsCell)Cdr);
             return procedure.Invoke(args, environment);
         }
 
@@ -68,19 +69,21 @@ namespace Scheme.Storage
 
         public override sealed string ToString()
         {
+            if (this == Nil)
+                return "()";
             var output = new StringBuilder($"({Car}");
-            var current = Cdr;
+            Object current = Cdr;
             while (current is ConsCell)
             {
+                if (current == Nil)
+                    return output.Append(')').ToString();
+
                 var cc = (ConsCell)current;
                 output.Append($" {cc.Car}");
                 current = cc.Cdr;
             }
-            if (current is Nil)
-                output.Append(')');
-            else
-                output.Append($" . {current})");
-            return output.ToString();
+
+            return output.Append($" . {current})").ToString();
             // TODO: Circular list case.
         }
     }
