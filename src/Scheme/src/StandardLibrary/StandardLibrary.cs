@@ -7,7 +7,9 @@ namespace Scheme
     internal static class StandardLibrary
     {
         public static Dictionary<Symbol, Object> Procedures
-            => procedures.Union(PairAndList.procedures)
+            => procedures
+                .Union(PairAndList.procedures)
+                .Union(Numbers.procedures)
                 .ToDictionary(kvp => new Symbol(kvp.Key),
                             kvp => (Object)new Procedure(kvp.Value));
 
@@ -19,7 +21,6 @@ namespace Scheme
                         ["set!"] = Set,
                         ["let"] = Let,
                         ["define-syntax"] = DefineSyntax,
-                        ["+"] = Plus,
                         ["lambda"] = Lambda
                     };
 
@@ -141,13 +142,6 @@ namespace Scheme
                 // TODO: Deep.
             }
             return datum;
-        }
-
-        private static Object Plus(IEnumerable<Object> args, Environment env)
-        {
-            // TODO: Validate: number.
-            var result = args.Sum(arg => ((Number)arg.Evaluate(env)).Value);
-            return new Number(result);
         }
 
         private static Object Lambda(IEnumerable<Object> args, Environment env)
