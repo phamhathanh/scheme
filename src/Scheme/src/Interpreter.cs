@@ -1,7 +1,4 @@
-using System.Collections.Generic;
 using Scheme.Storage;
-using System.Text.RegularExpressions;
-using System.Diagnostics;
 
 namespace Scheme
 {
@@ -11,7 +8,9 @@ namespace Scheme
         {
             var parser = new Parser();
             var data = parser.Parse(source);
-            var globalEnvironment = new Environment(StandardLibrary.Procedures, null);
+            var globalEnvironment = new Environment(null);
+            foreach (var procedure in StandardLibrary.Procedures)
+                globalEnvironment.AddBinding(procedure.Key, procedure.Value);
             
             Object result = null;
             foreach (var datum in data)

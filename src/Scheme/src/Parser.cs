@@ -21,12 +21,12 @@ namespace Scheme
         {
             var openParens = new Regex(@"\(");
             var closeParens = new Regex(@"\)");
-            var multispaces = new Regex(@"\s+");
+            var spaces = new Regex(@"\s+");
             string temp = source;
             temp = openParens.Replace(temp, " ( ");
             temp = closeParens.Replace(temp, " ) ");
             temp = temp.Trim();
-            return multispaces.Split(temp);
+            return spaces.Split(temp);
         }
 
         private ConsCell Read()

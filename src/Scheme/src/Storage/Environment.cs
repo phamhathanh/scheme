@@ -5,19 +5,19 @@ namespace Scheme.Storage
 {
     internal class Environment
     {
-        private readonly IDictionary<Symbol, Object> bindings;
+        private readonly IDictionary<Symbol, Location> bindings;
         private readonly Environment parent;
 
-        public Environment(IDictionary<Symbol, Object> bindings, Environment parent)
+        public Environment(Environment parent)
         {
-            this.bindings = bindings;
             this.parent = parent;
+            this.bindings = new Dictionary<Symbol, Location>();
         }
 
-        public void SetBinding(Symbol symbol, Object value)
-            => bindings[symbol] = value;
+        public void AddBinding(Symbol symbol, Object value)
+            => bindings[symbol] = new Location(value);
 
-        public Object LookUp(Symbol symbol)
+        public Location LookUp(Symbol symbol)
         {
             if (bindings.ContainsKey(symbol))
                 return bindings[symbol];

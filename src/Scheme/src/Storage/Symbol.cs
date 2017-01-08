@@ -9,7 +9,7 @@ namespace Scheme.Storage
         public Symbol(string value)
         {
             if (!Symbol.IsValid(value))
-                throw new System.ArgumentException("Invalid symbol.");
+                throw new System.ArgumentException($"Invalid symbol: {value}");
 
             this.value = value;
         }
@@ -21,13 +21,14 @@ namespace Scheme.Storage
 
             var letters = "A-Z a-z";
             var digits = "0-9";
-            var extendedCharacters = @"! $ % & * + - . / : < = > ? @ ^ _ ~";
+            var extendedCharacters = @"!$%&*+\-.\/:<=>?@^_~";
             var regex = new Regex($"^[{letters}{digits}{extendedCharacters}]+$");
             return regex.IsMatch(input);
         }
 
         public override Object Evaluate(Environment environment)
-            => environment.LookUp(this);
+            => environment.LookUp(this).Object;
+            // TODO: ensure eqv?-ness
 
         public override string ToString()
             => value;

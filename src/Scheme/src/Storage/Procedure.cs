@@ -13,7 +13,7 @@ namespace Scheme.Storage
             this.function = function;
         }
 
-        public Object Invoke(IEnumerable<Object> arguments, Environment environment)
+        public Object Apply(IEnumerable<Object> arguments, Environment environment)
             => function.Invoke(arguments, environment);
 
         public override sealed Object Evaluate(Environment environment)

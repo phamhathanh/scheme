@@ -29,17 +29,24 @@ namespace Scheme.Storage
             if (canBeEvaluated)
                 _operator = operatorExpression.Evaluate(environment);
 
-            if (!(_operator is Procedure))
-                throw new SemanticException($"Syntax error: {operatorExpression} does not evaluate to a procedure or macro.");
-                // TODO: Add macro.
+            if (_operator is Procedure)
+            {
+                var procedure = (Procedure)_operator;
 
-            var procedure = (Procedure)_operator;
+                if (!(Cdr is ConsCell))
+                    throw new SyntaxException($"Syntax error: Invalid expression.");
 
-            if (!(Cdr is ConsCell))
-                throw new SyntaxException($"Syntax error: Invalid expression.");
+                var args = GetArgs((ConsCell)Cdr);
+                return procedure.Apply(args, environment);
+            }
 
-            var args = GetArgs((ConsCell)Cdr);
-            return procedure.Invoke(args, environment);
+            if (_operator is Macro)
+            {
+                var macro = (Macro)_operator;
+                return macro.Expand(Cdr, environment);
+            }
+
+            throw new SemanticException($"Syntax error: {operatorExpression} does not evaluate to a procedure or macro.");
         }
 
         private IEnumerable<Object> GetArgs(ConsCell args)
