@@ -4,7 +4,7 @@ namespace Scheme.Storage
 {
     internal sealed class Procedure : Atom
     {
-        public delegate Object Function(IEnumerable<Object> arguments, Environment environment);
+        public delegate Object Function(IEnumerable<Object> arguments);
 
         private readonly Function function;
 
@@ -13,8 +13,8 @@ namespace Scheme.Storage
             this.function = function;
         }
 
-        public Object Apply(IEnumerable<Object> arguments, Environment environment)
-            => function.Invoke(arguments, environment);
+        public Object Apply(IEnumerable<Object> arguments)
+            => function.Invoke(arguments);
 
         public override sealed Object Evaluate(Environment environment)
             => this;

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Scheme.Storage
@@ -35,14 +36,16 @@ namespace Scheme.Storage
                 if (!(Cdr is ConsCell))
                     throw new SyntaxException($"Syntax error: Invalid expression.");
 
-                var args = GetArgs((ConsCell)Cdr);
-                return procedure.Apply(args, environment);
+                var args = from arg in GetArgs((ConsCell)Cdr)
+                           select arg.Evaluate(environment);
+                return procedure.Apply(args);
             }
 
             if (_operator is Macro)
             {
                 var macro = (Macro)_operator;
-                return macro.Expand(Cdr, environment);
+                var data = GetArgs((ConsCell)Cdr);
+                return macro.Expand(data, environment);
             }
 
             throw new SemanticException($"Syntax error: {operatorExpression} does not evaluate to a procedure or macro.");

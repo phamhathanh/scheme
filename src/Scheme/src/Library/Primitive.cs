@@ -8,10 +8,10 @@ namespace Scheme.Library
     {
         public static Dictionary<Symbol, Object> Procedures
             => procedures.ToDictionary(kvp => new Symbol(kvp.Key),
-                            kvp => (Object)new Procedure(kvp.Value));
+                            kvp => (Object)new Macro(kvp.Value));
 
-        private static Dictionary<string, Procedure.Function> procedures =
-                    new Dictionary<string, Procedure.Function>
+        private static Dictionary<string, Macro.Transformation> procedures =
+                    new Dictionary<string, Macro.Transformation>
                     {
                         ["quote"] = Quote,
                         ["define"] = Define,
@@ -21,14 +21,13 @@ namespace Scheme.Library
                         ["lambda"] = Lambda
                     };
 
-        private static Object Quote(IEnumerable<Object> args, Environment env)
+        private static Object Quote(IEnumerable<Object> data, Environment env)
         {
-            var argsArray = args.ToArray();
+            var argsArray = data.ToArray();
             ValidateArgCount(1, argsArray.Length);
 
             return argsArray[0];
         }
-        // TODO: Differentiate macro and procedure.
 
         private static void ValidateArgCount(int expected, int actual)
         {
@@ -38,9 +37,9 @@ namespace Scheme.Library
             throw new System.ArgumentException(message);
         }
 
-        private static Object Define(IEnumerable<Object> args, Environment env)
+        private static Object Define(IEnumerable<Object> data, Environment env)
         {
-            var argsArray = args.ToArray();
+            var argsArray = data.ToArray();
             ValidateArgCount(2, argsArray.Length);
             // TODO: Other forms.
             // TODO: Ensure this being called at the top only.
@@ -54,9 +53,9 @@ namespace Scheme.Library
             return null;
         }
 
-        private static Object Set(IEnumerable<Object> args, Environment env)
+        private static Object Set(IEnumerable<Object> data, Environment env)
         {
-            var argsArray = args.ToArray();
+            var argsArray = data.ToArray();
             ValidateArgCount(2, argsArray.Length);
             // TODO: Other forms.
             // TODO: Ensure this being called at the top only.
@@ -70,10 +69,10 @@ namespace Scheme.Library
             return null;
         }
 
-        private static Object Let(IEnumerable<Object> args, Environment env)
+        private static Object Let(IEnumerable<Object> data, Environment env)
         {
-            var bindings = (ConsCell)args.First();
-            var body = args.Skip(1);
+            var bindings = (ConsCell)data.First();
+            var body = data.Skip(1);
             // Must have at least one.
 
             var newEnvironment = new Environment(env);
@@ -90,9 +89,9 @@ namespace Scheme.Library
             return result;
         }
 
-        private static Object DefineSyntax(IEnumerable<Object> args, Environment env)
+        private static Object DefineSyntax(IEnumerable<Object> data, Environment env)
         {
-            var argsArray = args.ToArray();
+            var argsArray = data.ToArray();
             ValidateArgCount(2, argsArray.Length);
             // TODO: Other forms.
             // TODO: Ensure this being called at the top only.
@@ -111,10 +110,9 @@ namespace Scheme.Library
             // Naive case.
             var template = ((ConsCell)syntaxRule).GetListItems().ElementAt(1);
 
-            var macro = new Macro((_datum, _env) =>
+            var macro = new Macro((_data, _env) =>
             {
-                var _args = ((ConsCell)_datum).GetListItems();
-                var rules = symbols.Zip(_args, (s, a) => new { Key = s, Value = a })
+                var rules = symbols.Zip(_data, (s, a) => new { Key = s, Value = a })
                                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                 return Replace(template, rules).Evaluate(_env);
             });
@@ -141,15 +139,15 @@ namespace Scheme.Library
             return datum;
         }
 
-        private static Object Lambda(IEnumerable<Object> args, Environment env)
+        private static Object Lambda(IEnumerable<Object> data, Environment env)
         {
-            var argsArray = args.ToArray();
+            var argsArray = data.ToArray();
             if (argsArray.Length < 2)
                 throw new System.ArgumentException(
                     $"Wrong number of arguments: At least 2 expected instead of {argsArray.Length}.");
 
-            var formals = args.First();
-            var body = args.Skip(1);
+            var formals = data.First();
+            var body = data.Skip(1);
 
             // Assuming formal list only.
             // TODO: consider other forms.
@@ -157,10 +155,10 @@ namespace Scheme.Library
             var symbols = (from item in ((ConsCell)formals).GetListItems()
                            select (Symbol)item).ToArray();
 
-            return new Procedure((_args, _env) =>
+            return new Procedure(_args =>
             {
                 // TODO: Validate many things...
-                var lambdaEnv = new Environment(_env);
+                var lambdaEnv = new Environment(env);
                 for (int i = 0; i < symbols.Length; i++)
                     lambdaEnv.AddBinding(symbols[i], _args.ElementAt(i));
                 Object result = null;

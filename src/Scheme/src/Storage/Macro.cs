@@ -4,7 +4,8 @@ namespace Scheme.Storage
 {
     internal sealed class Macro : Atom
     {
-        public delegate Object Transformation(Object datum, Environment environment);
+        public delegate Object Transformation(IEnumerable<Object> data, Environment environment);
+            // TODO: Generalize the transformation.
 
         private readonly Transformation transformation;
 
@@ -13,8 +14,8 @@ namespace Scheme.Storage
             this.transformation = transformation;
         }
 
-        public Object Expand(Object datum, Environment environment)
-            => transformation.Invoke(datum, environment);
+        public Object Expand(IEnumerable<Object> data, Environment environment)
+            => transformation.Invoke(data, environment);
 
         public override sealed Object Evaluate(Environment environment)
             => this;

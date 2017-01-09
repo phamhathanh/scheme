@@ -30,32 +30,31 @@ namespace Scheme.Library
             throw new System.ArgumentException(message);
         }
 
-        private static Object IsPair(IEnumerable<Object> args, Environment env)
+        private static Object IsPair(IEnumerable<Object> args)
         {
             var argsArray = args.ToArray();
             ValidateArgCount(1, argsArray.Length);
 
-            var result = argsArray[0].Evaluate(env);
-            bool isPair = result is ConsCell;
+            bool isPair = argsArray[0] is ConsCell;
             return Boolean.FromBool(isPair);
         }
 
-        private static Object Cons(IEnumerable<Object> args, Environment env)
+        private static Object Cons(IEnumerable<Object> args)
         {
             var argsArray = args.ToArray();
             ValidateArgCount(2, argsArray.Length);
 
-            var car = argsArray[0].Evaluate(env);
-            var cdr = argsArray[1].Evaluate(env);
+            var car = argsArray[0];
+            var cdr = argsArray[1];
             return new ConsCell(car, cdr);
         }
 
-        private static Object Car(IEnumerable<Object> args, Environment env)
+        private static Object Car(IEnumerable<Object> args)
         {
             var argsArray = args.ToArray();
             ValidateArgCount(1, argsArray.Length);
 
-            var arg = argsArray[0].Evaluate(env);
+            var arg = argsArray[0];
             return GetPair(arg).Car;
         }
 
@@ -68,30 +67,28 @@ namespace Scheme.Library
             return (ConsCell)arg;
         }
 
-        private static Object Cdr(IEnumerable<Object> args, Environment env)
+        private static Object Cdr(IEnumerable<Object> args)
         {
             var argsArray = args.ToArray();
             ValidateArgCount(1, argsArray.Length);
 
-            var arg = argsArray[0].Evaluate(env);
-            return GetPair(arg).Cdr;
+            return GetPair(argsArray[0]).Cdr;
         }
 
-        private static Object IsNull(IEnumerable<Object> args, Environment env)
+        private static Object IsNull(IEnumerable<Object> args)
         {
             var argsArray = args.ToArray();
             ValidateArgCount(1, argsArray.Length);
 
-            var arg = argsArray[0].Evaluate(env);
-            return Boolean.FromBool(arg == ConsCell.Nil);
+            return Boolean.FromBool(argsArray[0] == ConsCell.Nil);
         }
 
-        private static Object IsList(IEnumerable<Object> args, Environment env)
+        private static Object IsList(IEnumerable<Object> args)
         {
             var argsArray = args.ToArray();
             ValidateArgCount(1, argsArray.Length);
 
-            var arg = argsArray[0].Evaluate(env);
+            var arg = argsArray[0];
             if (!(arg is ConsCell))
                 return Boolean.FALSE;
             return Boolean.FromBool(((ConsCell)arg).CheckIfIsList());

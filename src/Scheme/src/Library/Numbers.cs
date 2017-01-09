@@ -19,14 +19,14 @@ namespace Scheme.Library
                         ["*"] = Multiply
                     };
                     
-        private static Object Plus(IEnumerable<Object> args, Environment env)
+        private static Object Plus(IEnumerable<Object> args)
         {
             // TODO: Validate: number.
-            var sum = args.Sum(arg => ((Number)arg.Evaluate(env)).Value);
+            var sum = args.Sum(arg => ((Number)arg).Value);
             return new Number(sum);
         }
                     
-        private static Object Minus(IEnumerable<Object> args, Environment env)
+        private static Object Minus(IEnumerable<Object> args)
         {
             var argsArray = args.ToArray();
             if (argsArray.Length == 0)
@@ -35,17 +35,17 @@ namespace Scheme.Library
 
             // TODO: Validate: number.
             if (argsArray.Length == 1)
-                return new Number(-((Number)argsArray[0].Evaluate(env)).Value);
+                return new Number(-((Number)argsArray[0]).Value);
                 
-            var difference = argsArray.Skip(1).Aggregate(((Number)argsArray[0].Evaluate(env)).Value, (acc, arg) => acc - ((Number)arg.Evaluate(env)).Value);
+            var difference = argsArray.Skip(1).Aggregate(((Number)argsArray[0]).Value, (acc, arg) => acc - ((Number)arg).Value);
             // TODO: Make these less verbose.
             return new Number(difference);
         }
                     
-        private static Object Multiply(IEnumerable<Object> args, Environment env)
+        private static Object Multiply(IEnumerable<Object> args)
         {
             // TODO: Validate: number.
-            var product = args.Aggregate(1.0, (acc, arg) => acc*((Number)arg.Evaluate(env)).Value);
+            var product = args.Aggregate(1.0, (acc, arg) => acc*((Number)arg).Value);
             return new Number(product);
         }
     }
