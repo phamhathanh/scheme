@@ -46,7 +46,7 @@ namespace Scheme.Tests
         [Fact]
         public void CarTest() 
         {
-            var source = "(car (quote (a b c))";
+            var source = "(car (quote (a b c)))";
             var interpreter = new Interpreter();
             var result = interpreter.Interpret(source);
             var expected = "a";
@@ -56,7 +56,7 @@ namespace Scheme.Tests
         [Fact]
         public void CdrTest() 
         {
-            var source = "(cdr (quote (a b c))";
+            var source = "(cdr (quote (a b c)))";
             var interpreter = new Interpreter();
             var result = interpreter.Interpret(source);
             var expected = "(b c)";
@@ -66,7 +66,7 @@ namespace Scheme.Tests
         [Fact]
         public void IsNullTest() 
         {
-            var source = "(null? (quote ())";
+            var source = "(null? (quote ()))";
             var interpreter = new Interpreter();
             var result = interpreter.Interpret(source);
             var expected = "#t";
@@ -76,7 +76,7 @@ namespace Scheme.Tests
         [Fact]
         public void IsListTest() 
         {
-            var source = "(list? (quote (a b c))";
+            var source = "(list? (quote (a b c)))";
             var interpreter = new Interpreter();
             var result = interpreter.Interpret(source);
             var expected = "#t";
@@ -86,7 +86,7 @@ namespace Scheme.Tests
         [Fact]
         public void NilShouldBeList() 
         {
-            var source = "(list? (quote ())";
+            var source = "(list? (quote ()))";
             var interpreter = new Interpreter();
             var result = interpreter.Interpret(source);
             var expected = "#t";

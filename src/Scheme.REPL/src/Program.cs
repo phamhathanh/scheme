@@ -1,5 +1,4 @@
 ﻿using System;
-using Scheme;
 
 namespace Scheme.REPL
 {
@@ -22,7 +21,7 @@ namespace Scheme.REPL
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine(exception);
+                    Console.WriteLine(exception.GetType() + ": " + exception.Message);
                     return;
                     // TODO: Do something about the invalid state.
                     //       Rollback for example.

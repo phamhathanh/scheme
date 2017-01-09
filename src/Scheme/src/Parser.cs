@@ -8,12 +8,15 @@ namespace Scheme
     internal class Parser
     {
         private Queue<string> tokens = new Queue<string>();
+        private int openParenCount = 0;
 
         public IEnumerable<Object> Parse(string source)
         {
             Debug.Assert(tokens.Count == 0);
             tokens = new Queue<string>(Tokenize(source));
             var topLevelList = Read();
+            if (openParenCount != 0)
+                throw new SyntaxException("Mismatching parenthesis.");
             return topLevelList.GetListItems();
         }
 
@@ -33,16 +36,21 @@ namespace Scheme
         {
             if (tokens.Count == 0)
                 return ConsCell.Nil;
+
             var token = tokens.Dequeue();
             Object car, cdr;
             if (token == "(")
             {
+                openParenCount++;
                 car = Read();
                 cdr = Read();
                 return new ConsCell(car, cdr);
             }
             if (token == ")")
+            {
+                openParenCount--;
                 return ConsCell.Nil;
+            }
 
             car = Atom.Parse(token);
             cdr = Read();

@@ -5,20 +5,26 @@ namespace Scheme
 {
     public class Interpreter
     {
-        public string Interpret(string source)
+        private readonly Parser parser;
+        private readonly Environment global;
+
+        public Interpreter()
         {
-            var parser = new Parser();
-            var data = parser.Parse(source);
-            var globalEnvironment = new Environment(null);
+            parser = new Parser();
+            global = new Environment(null);
             var library = Library.Primitive.Procedures
                             .Concat(Library.Numbers.Procedures)
                             .Concat(Library.PairAndList.Procedures);
             foreach (var procedure in library)
-                globalEnvironment.AddBinding(procedure.Key, procedure.Value);
-            
+                global.AddBinding(procedure.Key, procedure.Value);
+        }
+
+        public string Interpret(string source)
+        {
+            var data = parser.Parse(source);
             Object result = null;
             foreach (var datum in data)
-                result = datum.Evaluate(globalEnvironment);
+                result = datum.Evaluate(global);
             return result?.ToString();
         }
     }

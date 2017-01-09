@@ -6,52 +6,57 @@ namespace Scheme.Storage
 {
     internal sealed class ConsCell : Object
     {
-        public static readonly ConsCell Nil = new ConsCell(null, null);
+        public static readonly ConsCell Nil = new ConsCell();
 
         public Object Car { get; private set; }
         public Object Cdr { get; private set; }
 
+        private ConsCell() { }
+        // For Nil.
+
         public ConsCell(Object car, Object cdr)
         {
-            // Check if null.
+            if (car == null || cdr == null)
+                throw new System.ArgumentException("Object is null.");
+
             Car = car;
             Cdr = cdr;
         }
 
-        public override sealed Object Evaluate(Environment environment)
+        public override Object Evaluate(Environment environment)
         {
             if (this == Nil)
-                throw new SyntaxException("Cannot evaluate nil.");
+                throw new SemanticException("Cannot evaluate nil.");
 
             var operatorExpression = Car;
             Object _operator = operatorExpression;
             bool canBeEvaluated = operatorExpression is ConsCell || operatorExpression is Symbol;
             if (canBeEvaluated)
                 _operator = operatorExpression.Evaluate(environment);
+                // TODO: Is there a case where a procedure object is directly assigned to Car?
+
+            if (!(Cdr is ConsCell))
+                throw new SyntaxException("Syntax error: Invalid expression.");
+            var subexpressions = GetSubexpressions((ConsCell)Cdr);
 
             if (_operator is Procedure)
             {
                 var procedure = (Procedure)_operator;
-
-                if (!(Cdr is ConsCell))
-                    throw new SyntaxException($"Syntax error: Invalid expression.");
-
-                var args = from arg in GetArgs((ConsCell)Cdr)
-                           select arg.Evaluate(environment);
+                var args = from subexpression in subexpressions
+                           select subexpression.Evaluate(environment);
                 return procedure.Apply(args);
             }
 
             if (_operator is Macro)
             {
                 var macro = (Macro)_operator;
-                var data = GetArgs((ConsCell)Cdr);
-                return macro.Expand(data, environment);
+                return macro.Expand(subexpressions, environment);
             }
 
             throw new SemanticException($"Syntax error: {operatorExpression} does not evaluate to a procedure or macro.");
         }
 
-        private IEnumerable<Object> GetArgs(ConsCell args)
+        private IEnumerable<Object> GetSubexpressions(ConsCell args)
         {
             try
             {
