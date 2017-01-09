@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace Scheme.Storage
 {
@@ -6,6 +7,10 @@ namespace Scheme.Storage
     {
         public static Atom Parse(string input)
         {
+            bool isBoolean = (new[] { "#t", "#f", "#true", "#false" }).Contains(input);
+            if (isBoolean)
+                return Boolean.FromString(input);
+
             double number;
             bool isNumber = double.TryParse(input, out number);
             if (isNumber)
@@ -18,7 +23,7 @@ namespace Scheme.Storage
             if (Symbol.IsValid(input))
                 return new Symbol(input);
 
-            throw new SyntaxException("Incorrect atom format.");
+            throw new SyntaxException($"Incorrect atom format: {input}");
         }
     }
 }

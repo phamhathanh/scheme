@@ -19,16 +19,14 @@ namespace Scheme.REPL
                     var result = interpreter.Interpret(source);
                     if (result != null)
                         Console.WriteLine($" => {result}");
-                    // TODO: Preserve program state.
-                    Console.WriteLine();
                     Console.Write(" > ");
                     leftovers = "";
                 }
                 catch (MissingClosingParenthesisException)
                 {
-                    Console.WriteLine("DEBUG: " + source);
                     leftovers = source;
                     Console.Write($".. ");
+                    // TODO: Indent.
                     continue;
                 }
                 catch (Exception exception)

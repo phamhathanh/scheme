@@ -38,6 +38,16 @@ namespace Scheme.Tests
         }
 
         [Fact]
+        public void IfTest() 
+        {
+            var source = "(if #t \"true\" \"false\")";
+            var interpreter = new Interpreter();
+            var result = interpreter.Interpret(source);
+            var expected = "\"true\"";
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
         public void MacroTest() 
         {
             var source =

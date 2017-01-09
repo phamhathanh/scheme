@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Scheme.Storage;
 
@@ -16,9 +17,10 @@ namespace Scheme.Library
                         ["quote"] = Quote,
                         ["define"] = Define,
                         ["set!"] = Set,
-                        ["let"] = Let,
+                        ["if"] = If,
                         ["define-syntax"] = DefineSyntax,
-                        ["lambda"] = Lambda
+                        ["lambda"] = Lambda,
+                        ["let"] = Let
                     };
 
         private static Object Quote(IEnumerable<Object> data, Environment env)
@@ -69,24 +71,26 @@ namespace Scheme.Library
             return null;
         }
 
-        private static Object Let(IEnumerable<Object> data, Environment env)
+        private static Object If(IEnumerable<Object> data, Environment env)
         {
-            var bindings = (ConsCell)data.First();
-            var body = data.Skip(1);
-            // Must have at least one.
-
-            var newEnvironment = new Environment(env);
-            foreach (var binding in bindings.GetListItems())
+            var argsArray = data.ToArray();
+            int n = argsArray.Length;
+            if (n < 2 || n > 3)
             {
-                var items = ((ConsCell)binding).GetListItems().ToArray();
-                var variable = (Symbol)items[0];
-                var init = items[1].Evaluate(env);
-                newEnvironment.AddBinding(variable, init);
+                var message = $"Wrong number of arguments: 2 or 3 expected instead of {n}.";
+                throw new SyntaxException(message);
             }
-            Object result = null;
-            foreach (var statement in body)
-                result = statement.Evaluate(newEnvironment);
-            return result;
+            var test = argsArray[0];
+            var consequent = argsArray[1];
+            var alternate = argsArray[2];
+            bool isTrue = test.Evaluate(env) != Boolean.FALSE;
+            if (isTrue)
+                return consequent.Evaluate(env);
+            if (n == 2)
+                return null;
+                // Should be unspecified.
+            Debug.Assert(n == 3);
+            return alternate.Evaluate(env);
         }
 
         private static Object DefineSyntax(IEnumerable<Object> data, Environment env)
@@ -166,6 +170,27 @@ namespace Scheme.Library
                     result = expression.Evaluate(lambdaEnv);
                 return result;
             });
+        }
+
+        private static Object Let(IEnumerable<Object> data, Environment env)
+        // TODO: Replace by Scheme code.
+        {
+            var bindings = (ConsCell)data.First();
+            var body = data.Skip(1);
+            // Must have at least one.
+
+            var newEnvironment = new Environment(env);
+            foreach (var binding in bindings.GetListItems())
+            {
+                var items = ((ConsCell)binding).GetListItems().ToArray();
+                var variable = (Symbol)items[0];
+                var init = items[1].Evaluate(env);
+                newEnvironment.AddBinding(variable, init);
+            }
+            Object result = null;
+            foreach (var statement in body)
+                result = statement.Evaluate(newEnvironment);
+            return result;
         }
     }
 }
