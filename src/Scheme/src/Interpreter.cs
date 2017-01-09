@@ -1,4 +1,5 @@
 using Scheme.Storage;
+using System.Linq;
 
 namespace Scheme
 {
@@ -9,7 +10,10 @@ namespace Scheme
             var parser = new Parser();
             var data = parser.Parse(source);
             var globalEnvironment = new Environment(null);
-            foreach (var procedure in StandardLibrary.Procedures)
+            var library = Library.Primitive.Procedures
+                            .Concat(Library.Numbers.Procedures)
+                            .Concat(Library.PairAndList.Procedures);
+            foreach (var procedure in library)
                 globalEnvironment.AddBinding(procedure.Key, procedure.Value);
             
             Object result = null;

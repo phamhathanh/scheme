@@ -2,11 +2,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Scheme.Storage;
 
-namespace Scheme
+namespace Scheme.Library
 {
     internal static class Numbers
     {
-        public static readonly Dictionary<string, Procedure.Function> procedures =
+        public static Dictionary<Symbol, Object> Procedures
+            => procedures.ToDictionary(kvp => new Symbol(kvp.Key),
+                            kvp => (Object)new Procedure(kvp.Value));
+
+        private static readonly Dictionary<string, Procedure.Function> procedures =
         // TODO: Properly encapsulate.
                     new Dictionary<string, Procedure.Function>
                     {

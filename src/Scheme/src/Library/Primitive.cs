@@ -2,15 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Scheme.Storage;
 
-namespace Scheme
+namespace Scheme.Library
 {
-    internal static class StandardLibrary
+    internal static class Primitive
     {
         public static Dictionary<Symbol, Object> Procedures
-            => procedures
-                .Union(PairAndList.procedures)
-                .Union(Numbers.procedures)
-                .ToDictionary(kvp => new Symbol(kvp.Key),
+            => procedures.ToDictionary(kvp => new Symbol(kvp.Key),
                             kvp => (Object)new Procedure(kvp.Value));
 
         private static Dictionary<string, Procedure.Function> procedures =

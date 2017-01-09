@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Scheme.Tests
 {
-    public class StandardLibraryTest
+    public class BaseLibraryTest
     {
         [Fact]
         public void QuoteTest() 
