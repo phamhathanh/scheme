@@ -31,10 +31,12 @@ namespace Scheme
         {
             var openParens = new Regex(@"\(");
             var closeParens = new Regex(@"\)");
+            var quotes = new Regex("'");
             var spaces = new Regex(@"\s+");
             string temp = source;
             temp = openParens.Replace(temp, " ( ");
             temp = closeParens.Replace(temp, " ) ");
+            temp = quotes.Replace(temp, " ' ");
             temp = temp.Trim();
             return spaces.Split(temp);
         }
@@ -44,13 +46,12 @@ namespace Scheme
             if (tokens.Count == 0)
                 return ConsCell.Nil;
             
-            Object car, cdr;
             var token = tokens.Dequeue();
             if (token == "(")
             {
                 openingParensCount++;
-                car = Read();
-                cdr = Read();
+                var car = Read();
+                var cdr = Read();
                 return new ConsCell(car, cdr);
             }
             if (token == ")")
@@ -58,10 +59,19 @@ namespace Scheme
                 openingParensCount--;
                 return ConsCell.Nil;
             }
-
-            car = Atom.Parse(token);
-            cdr = Read();
-            return new ConsCell(car, cdr);
+            if (token == "'")
+            {
+                var caar = Atom.Parse("quote");
+                var cadr = Read();
+                var car = new ConsCell(caar, cadr);
+                var cdr = Read();
+                return new ConsCell(car, cdr);
+            }
+            {
+                var car = Atom.Parse(token);
+                var cdr = Read();
+                return new ConsCell(car, cdr);
+            }
         }
     }
 }

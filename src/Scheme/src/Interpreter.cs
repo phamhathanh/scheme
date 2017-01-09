@@ -23,6 +23,7 @@ namespace Scheme
         {
             var data = parser.Parse(source);
             Object result = null;
+
             foreach (var datum in data)
                 result = datum.Evaluate(global);
             return result?.ToString();

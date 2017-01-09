@@ -52,7 +52,7 @@ namespace Scheme.Storage
                 var macro = (Macro)_operator;
                 return macro.Expand(subexpressions, environment);
             }
-
+            
             throw new SemanticException($"Syntax error: {operatorExpression} does not evaluate to a procedure or macro.");
         }
 

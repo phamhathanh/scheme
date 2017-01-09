@@ -16,6 +16,16 @@ namespace Scheme.Tests
         }
 
         [Fact]
+        public void ShorthandQuoteTest() 
+        {
+            var source = "'(2 3)";
+            var interpreter = new Interpreter();
+            var result = interpreter.Interpret(source);
+            var expected = "(2 3)";
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
         public void DefineTest() 
         {
             var source = "(define abc 5) abc";
