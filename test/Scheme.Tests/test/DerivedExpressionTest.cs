@@ -14,5 +14,15 @@ namespace Scheme.Tests
             var expected = "(f g)";
             Assert.Equal(expected, result);
         }
+
+        [Fact]
+        public void OrTest()
+        {
+            var source = "(or #f #f #f)";
+            var interpreter = new Interpreter();
+            var result = interpreter.Interpret(source);
+            var expected = "#f";
+            Assert.Equal(expected, result);
+        }
     }
 }

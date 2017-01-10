@@ -144,12 +144,7 @@ namespace Scheme.Library
                                               // Should somehow be unique.
                         symbols = symbols.Take(symbols.Length - 1).Concat(expandedSymbols).ToArray();
                         var template = ruleTemplates[ruleSymbols.IndexOf(ruleSymbol)];
-
-                        var expandedSymbolList = CreateList(expandedSymbols);
-                        var expandedTemplate = ReplaceElipsis(template, new Dictionary<Symbol, Object>
-                        {
-                            [elipsis] = expandedSymbolList
-                        });
+                        var expandedTemplate = ReplaceElipsis(template, numberOfExtraSymbols);
                         var rules = symbols.Zip(__data, (s, a) => new { Key = s, Value = a })
                                             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                         return Replace(expandedTemplate, rules).Evaluate(_env);
@@ -159,6 +154,19 @@ namespace Scheme.Library
             });
             env.AddBinding((Symbol)keyword, macro);
             return null;
+        }
+
+        private static Object ReplaceElipsis(Object template, int numberOfExtraSymbols)
+        {
+            var expandedSymbols = from index in Enumerable.Range(0, numberOfExtraSymbols)
+                                    select new Symbol("_" + index);
+                                    // Should be unique.
+            var expandedSymbolList = CreateList(expandedSymbols);
+            var expansionRule = new Dictionary<Symbol, Object>
+            {
+                [new Symbol("...")] = expandedSymbolList
+            };
+            return ReplaceElipsis(template, expansionRule);
         }
 
         private static ConsCell CreateList(IEnumerable<Object> objects)
