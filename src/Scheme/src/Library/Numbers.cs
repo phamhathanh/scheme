@@ -16,7 +16,10 @@ namespace Scheme.Library
                     {
                         ["+"] = Plus,
                         ["-"] = Minus,
-                        ["*"] = Multiply
+                        ["*"] = Multiply,
+                        ["="] = Equal,
+                        ["<"] = Less,
+                        [">"] = More
                     };
                     
         private static Object Plus(IEnumerable<Object> args)
@@ -47,6 +50,41 @@ namespace Scheme.Library
             // TODO: Validate: number.
             var product = args.Aggregate(1.0, (acc, arg) => acc*((Number)arg).Value);
             return new Number(product);
+        }
+                    
+        private static Object Equal(IEnumerable<Object> args)
+        {
+            // TODO: Validate: number.
+            var areEqual = args.Skip(1).All(arg => (Number)arg == (Number)args.First());
+            return Boolean.FromBool(areEqual);
+        }
+                    
+        private static Object Less(IEnumerable<Object> args)
+        {
+            // TODO: Validate: number.
+            var lastNumber = (Number)args.First();
+            foreach (var arg in args.Skip(1))
+            {
+                var number = (Number)arg;
+                if (lastNumber.Value >= number.Value)
+                    return Boolean.FALSE;
+                lastNumber = number;
+            }
+            return Boolean.TRUE;
+        }
+                    
+        private static Object More(IEnumerable<Object> args)
+        {
+            // TODO: Validate: number.
+            var lastNumber = (Number)args.First();
+            foreach (var arg in args.Skip(1))
+            {
+                var number = (Number)arg;
+                if (lastNumber.Value <= number.Value)
+                    return Boolean.FALSE;
+                lastNumber = number;
+            }
+            return Boolean.TRUE;
         }
     }
 }
