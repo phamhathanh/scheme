@@ -62,9 +62,10 @@ namespace Scheme
             if (token == "'")
             {
                 var caar = Atom.Parse("quote");
-                var cadr = Read();
+                var next = Read();
+                var cadr = new ConsCell(next.Car, ConsCell.Nil);
                 var car = new ConsCell(caar, cadr);
-                var cdr = Read();
+                var cdr = next.Cdr;
                 return new ConsCell(car, cdr);
             }
             {

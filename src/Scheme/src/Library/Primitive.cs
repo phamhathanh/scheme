@@ -7,11 +7,11 @@ namespace Scheme.Library
 {
     internal static class Primitive
     {
-        public static Dictionary<Symbol, Object> Procedures
-            => procedures.ToDictionary(kvp => new Symbol(kvp.Key),
+        public static Dictionary<Symbol, Object> Macros
+            => macros.ToDictionary(kvp => new Symbol(kvp.Key),
                             kvp => (Object)new Macro(kvp.Value));
 
-        private static Dictionary<string, Macro.Transformation> procedures =
+        private static Dictionary<string, Macro.Transformation> macros =
                     new Dictionary<string, Macro.Transformation>
                     {
                         ["quote"] = Quote,
@@ -60,7 +60,6 @@ namespace Scheme.Library
             var argsArray = data.ToArray();
             ValidateArgCount(2, argsArray.Length);
             // TODO: Other forms.
-            // TODO: Ensure this being called at the top only.
 
             var variable = argsArray[0];
             if (!(variable is Symbol))
@@ -88,7 +87,7 @@ namespace Scheme.Library
                 return consequent.Evaluate(env);
             if (n == 2)
                 return null;
-                // Should be unspecified.
+            // Should be unspecified.
             Debug.Assert(n == 3);
             return alternate.Evaluate(env);
         }
@@ -105,23 +104,90 @@ namespace Scheme.Library
                 throw new SyntaxException("Can only define variable.");
 
             var transformerSpec = argsArray[1];
-            var syntaxRule = ((ConsCell)transformerSpec).GetListItems().ElementAt(2);
-            // 3, 4, 5 are also rules.
-            var pattern = ((ConsCell)syntaxRule).GetListItems().First();
+            var syntaxRules = ((ConsCell)transformerSpec).GetListItems().Skip(2);
+            var ruleSymbols = new List<IEnumerable<Symbol>>();
+            var ruleTemplates = new List<Object>();
+            foreach (var syntaxRule in syntaxRules)
+            {
+                var items = ((ConsCell)syntaxRule).GetListItems();
+                var pattern = items.First();
+                var symbols = from item in ((ConsCell)pattern).GetListItems().Skip(1)
+                              select (Symbol)item;
+                // TODO: Validate: 2 args only.
+                var template = items.ElementAt(1);
 
-            var symbols = from item in ((ConsCell)((ConsCell)pattern).Cdr).GetListItems()
-                          select (Symbol)item;
-            // Naive case.
-            var template = ((ConsCell)syntaxRule).GetListItems().ElementAt(1);
+                ruleSymbols.Add(symbols);
+                ruleTemplates.Add(template);
+            }
 
             var macro = new Macro((_data, _env) =>
             {
-                var rules = symbols.Zip(_data, (s, a) => new { Key = s, Value = a })
-                                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-                return Replace(template, rules).Evaluate(_env);
+                // Hack: Match by number of args.
+                var __data = _data.ToArray();
+                var numberOfSymbols = __data.Length;
+                foreach (var ruleSymbol in ruleSymbols)
+                {
+                    var symbols = ruleSymbol.ToArray();
+                    if (symbols.Length == numberOfSymbols)
+                    {
+                        var template = ruleTemplates[ruleSymbols.IndexOf(ruleSymbol)];
+                        var rules = symbols.Zip(__data, (s, a) => new { Key = s, Value = a })
+                                            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                        return Replace(template, rules).Evaluate(_env);
+                    }
+                    var elipsis = new Symbol("...");
+                    if (numberOfSymbols >= symbols.Length - 1 && symbols.Length > 0 && symbols.Last().Equals(elipsis))
+                    {
+                        int numberOfExtraSymbols = numberOfSymbols - symbols.Length + 1;
+                        var expandedSymbols = from index in Enumerable.Range(0, numberOfExtraSymbols)
+                                              select new Symbol("_" + index);
+                                              // Should somehow be unique.
+                        symbols = symbols.Take(symbols.Length - 1).Concat(expandedSymbols).ToArray();
+                        var template = ruleTemplates[ruleSymbols.IndexOf(ruleSymbol)];
+
+                        var expandedSymbolList = CreateList(expandedSymbols);
+                        var expandedTemplate = ReplaceElipsis(template, new Dictionary<Symbol, Object>
+                        {
+                            [elipsis] = expandedSymbolList
+                        });
+                        var rules = symbols.Zip(__data, (s, a) => new { Key = s, Value = a })
+                                            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                        return Replace(expandedTemplate, rules).Evaluate(_env);
+                    }
+                }
+                throw new SyntaxException($"No syntax defined for {numberOfSymbols} args.");
             });
             env.AddBinding((Symbol)keyword, macro);
             return null;
+        }
+
+        private static ConsCell CreateList(IEnumerable<Object> objects)
+        {
+            if (objects.Any())
+                return new ConsCell(objects.First(), CreateList(objects.Skip(1)));
+            return ConsCell.Nil;
+        }
+
+        private static Object ReplaceElipsis(Object datum, Dictionary<Symbol, Object> rules)
+        {
+            if (datum is ConsCell)
+            {
+                if (datum == ConsCell.Nil)
+                    return datum;
+
+                var consCell = (ConsCell)datum;
+                if (consCell.Car.ToString() == "...")
+                    return ReplaceElipsis(consCell.Car, rules);
+                return new ConsCell(ReplaceElipsis(consCell.Car, rules), ReplaceElipsis(consCell.Cdr, rules));
+            }
+            if (datum is Symbol)
+            {
+                var symbol = (Symbol)datum;
+                if (rules.ContainsKey(symbol))
+                    return rules[symbol];
+                // TODO: Deep.
+            }
+            return datum;
         }
 
         private static Object Replace(Object datum, Dictionary<Symbol, Object> rules)
