@@ -14,6 +14,7 @@ namespace Scheme
             global = new Environment(null);
             var library = Library.Primitive.Macros
                             .Concat(Library.Numbers.Procedures)
+                            .Concat(Library.Booleans.Procedures)
                             .Concat(Library.PairAndList.Procedures);
             foreach (var procedure in library)
                 global.AddBinding(procedure.Key, procedure.Value);

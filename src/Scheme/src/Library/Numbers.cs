@@ -11,7 +11,6 @@ namespace Scheme.Library
                             kvp => (Object)new Procedure(kvp.Value));
 
         private static readonly Dictionary<string, Procedure.Function> procedures =
-        // TODO: Properly encapsulate.
                     new Dictionary<string, Procedure.Function>
                     {
                         ["+"] = Plus,
