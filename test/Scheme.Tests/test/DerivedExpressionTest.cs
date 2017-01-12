@@ -24,5 +24,19 @@ namespace Scheme.Tests
             var expected = "#f";
             Assert.Equal(expected, result);
         }
+
+        [Fact]
+        public void BeginTest()
+        {
+            var source =
+@"(define x 0)
+    (and (= x 0)
+         (begin (set! x 5)
+                (+ x 1)))";
+            var interpreter = new Interpreter();
+            var result = interpreter.Interpret(source);
+            var expected = "6";
+            Assert.Equal(expected, result);
+        }
     }
 }

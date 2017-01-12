@@ -20,7 +20,8 @@ namespace Scheme.Library
                         ["if"] = If,
                         ["define-syntax"] = DefineSyntax,
                         ["lambda"] = Lambda,
-                        ["let"] = Let
+                        ["let"] = Let,
+                        ["begin"] = Begin
                     };
 
         private static Object Quote(IEnumerable<Object> data, Environment env)
@@ -264,6 +265,16 @@ namespace Scheme.Library
             Object result = null;
             foreach (var statement in body)
                 result = statement.Evaluate(newEnvironment);
+            return result;
+        }
+
+        private static Object Begin(IEnumerable<Object> data, Environment env)
+        // TODO: Replace by Scheme code.
+        {
+            var body = data;
+            Object result = null;
+            foreach (var statement in body)
+                result = statement.Evaluate(env);
             return result;
         }
     }
