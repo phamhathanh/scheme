@@ -31,7 +31,8 @@ namespace Scheme.Library
             if (actual == expected)
                 return;
             var message = $"Wrong number of arguments: {expected} expected instead of {actual}.";
-            throw new System.ArgumentException(message);
+            // TODO: include procedure name.
+            throw new SyntaxException(message);
         }
 
         private static Object IsBoolean(IEnumerable<Object> args)

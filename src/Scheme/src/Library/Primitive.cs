@@ -37,7 +37,8 @@ namespace Scheme.Library
             if (actual == expected)
                 return;
             var message = $"Wrong number of arguments: {expected} expected instead of {actual}.";
-            throw new System.ArgumentException(message);
+            // TODO: include procedure name.
+            throw new SyntaxException(message);
         }
 
         private static Object Define(IEnumerable<Object> data, Environment env)
@@ -77,7 +78,7 @@ namespace Scheme.Library
             int n = argsArray.Length;
             if (n < 2 || n > 3)
             {
-                var message = $"Wrong number of arguments: 2 or 3 expected instead of {n}.";
+                var message = $"Wrong number of arguments for if: 2 or 3 expected instead of {n}.";
                 throw new SyntaxException(message);
             }
             var test = argsArray[0];
@@ -223,7 +224,7 @@ namespace Scheme.Library
             var argsArray = data.ToArray();
             if (argsArray.Length < 2)
                 throw new System.ArgumentException(
-                    $"Wrong number of arguments: At least 2 expected instead of {argsArray.Length}.");
+                    $"Wrong number of arguments for lambda: At least 2 expected instead of {argsArray.Length}.");
 
             var formals = data.First();
             var body = data.Skip(1);

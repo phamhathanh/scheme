@@ -21,14 +21,6 @@ namespace Scheme.Library
                         ["list?"] = IsList
                     };
 
-        private static void ValidateArgCount(int expected, int actual)
-        {
-            if (actual == expected)
-                return;
-            var message = $"Wrong number of arguments: {expected} expected instead of {actual}.";
-            throw new System.ArgumentException(message);
-        }
-
         private static Object IsPair(IEnumerable<Object> args)
         {
             var argsArray = args.ToArray();
@@ -36,6 +28,15 @@ namespace Scheme.Library
 
             bool isPair = argsArray[0] is ConsCell;
             return Boolean.FromBool(isPair);
+        }
+
+        private static void ValidateArgCount(int expected, int actual)
+        {
+            if (actual == expected)
+                return;
+            var message = $"Wrong number of arguments: {expected} expected instead of {actual}.";
+            // TODO: include procedure name.
+            throw new SyntaxException(message);
         }
 
         private static Object Cons(IEnumerable<Object> args)

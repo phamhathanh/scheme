@@ -33,7 +33,7 @@ namespace Scheme.Library
             var argsArray = args.ToArray();
             if (argsArray.Length == 0)
                 throw new System.ArgumentException(
-                    $"Wrong number of arguments: At least 1 expected instead of 0.");
+                    $"Wrong number of arguments for -: At least 1 expected instead of 0.");
 
             // TODO: Validate: number.
             if (argsArray.Length == 1)

@@ -27,8 +27,10 @@ namespace Scheme.REPL
                 {
                     var result = interpreter.Interpret(source);
                     if (result != null)
+                    {
                         Console.WriteLine($"=> {result}");
-                    Console.WriteLine();
+                        Console.WriteLine();
+                    }
                     Console.Write(" > ");
                     leftovers = "";
                 }
