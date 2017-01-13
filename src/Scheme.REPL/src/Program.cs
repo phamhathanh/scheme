@@ -44,6 +44,8 @@ namespace Scheme.REPL
                 catch (Exception exception)
                 {
                     Console.WriteLine(exception.GetType() + ": " + exception.Message);
+                    Console.Write(" > ");
+                    leftovers = "";
                     // TODO: Do something about the invalid state.
                     //       Rollback for example.
                 }

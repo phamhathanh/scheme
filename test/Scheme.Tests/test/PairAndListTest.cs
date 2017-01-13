@@ -30,7 +30,7 @@ namespace Scheme.Tests
         {
             var source = "(pair? 2 3)";
             var interpreter = new Interpreter();
-            Assert.Throws<ArgumentException>(() => interpreter.Interpret(source));
+            Assert.Throws<SyntaxException>(() => interpreter.Interpret(source));
         }
 
         [Fact]

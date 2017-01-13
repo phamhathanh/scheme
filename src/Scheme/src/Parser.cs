@@ -15,6 +15,9 @@ namespace Scheme
         {
             Debug.Assert(tokens.Count == 0);
             tokens = new Queue<string>(Tokenize(source));
+            if (tokens.Count == 0)
+                return Enumerable.Empty<Object>();
+
             openingParensCount = 0;
 
             var topLevelList = Read();
@@ -38,6 +41,8 @@ namespace Scheme
             temp = closeParens.Replace(temp, " ) ");
             temp = quotes.Replace(temp, " ' ");
             temp = temp.Trim();
+            if (temp == "")
+                return new string[0];
             return spaces.Split(temp);
         }
 

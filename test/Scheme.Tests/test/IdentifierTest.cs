@@ -22,5 +22,14 @@ namespace Scheme.Tests
             Assert.Throws<SyntaxException>(() => interpreter.Interpret(source));
             // TODO: fix this when pair notion is implemented.
         }
+
+        [Fact]
+        public void ShouldDoNothing() 
+        {
+            var source = "";
+            var interpreter = new Interpreter();
+            var result = interpreter.Interpret(source);
+            Assert.Null(result);
+        }
     }
 }
